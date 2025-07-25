@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Cooperativa</title>
+  <link rel="stylesheet" href="estilos/index.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <header>
+    <div class="logo">COOPERATIVA</div>
+    <button class="menu-btn" onclick="toggleMenu()">☰ Menú</button>
+    <div class="menu" id="menu">
+      <a href="login.html">Iniciar Sesión</a>
+      <a href="registro.html">Regístrate</a>
+      <a href="#nosotros">Sobre Nosotros</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="recuadro">FOTO</div>
+    <div class="recuadro">TEXTO</div>
+  </main>
+
+  <footer>
+    <p>Contáctanos: correo@cooperativa.com | +598-xxx-xxxx</p>
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById('menu');
+      menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+    }
+  </script>
+</body>
+</html>

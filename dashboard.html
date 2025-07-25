@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Datos Personales</title>
+  <link rel="stylesheet" href="estilos/dashboard.css">
+</head>
+<body>
+  <div class="contenedor">
+    <div class="dashboard-content">
+      
+      <div class="center-block">
+        <h2>Datos Personales</h2>
+        <form id="datos-form" action="guardar_datos.php" method="POST" onsubmit="return validarCedula()">
+          <label>
+            Nombre:
+            <input type="text" name="nombre" required>
+          </label>
+          <label>
+            Fecha de nacimiento:
+            <input type="date" name="fecha" required>
+          </label>
+          <label>
+            Cédula:
+            <input type="number" name="cedula" id="cedula" required>
+          </label>
+          <button type="submit">Guardar Datos</button>
+        </form>
+        <form action="logout.php" method="POST" class="logout-form">
+          <button type="submit">Cerrar Sesión</button>
+        </form>
+      </div>
+      
+      <form action="eliminar.php" method="POST" class="eliminar-form">
+        <button type="submit" class="eliminar-btn">Eliminar Usuario</button>
+      </form>
+      
+    </div>
+    <div class="decoracion"></div>
+  </div>
+
+  <script>
+    function validarCedula() {
+      const cedula = document.getElementById("cedula").value;
+      if (!/^\d{7}$/.test(cedula)) {
+        alert("La cédula debe contener exactamente 7 dígitos.");
+        return false;
+      }
+      return true;
+    }
+  </script>
+</body>
+</html>
