@@ -16,9 +16,11 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #004080;
+  background-image: url(solidaridad.jpeg);
+  background-size: cover;
+  background-position: center;
   color: white;
-  padding: 10px 20px;
+  padding: 75px 20px;
 }
 
 .logo {
@@ -37,7 +39,7 @@ header {
 .menu {
   display: none;
   position: absolute;
-  top: 60px;
+  top: 110px;
   right: 20px;
   background-color: #eee;
   border: 1px solid #ccc;
@@ -72,7 +74,8 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.4em;
+  font-size: 28px;
+  text-align: justify;
   background-color: #f9f9f9;
 }
 
