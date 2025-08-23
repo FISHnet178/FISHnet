@@ -1,22 +1,29 @@
 <?php
+require 'config.php';
 session_start();
-$usuario = $_SESSION['usuario'] ?? null;
 
-if (!$usuario) {
-    die("No has iniciado sesión. <a href='index.html'>Iniciar sesión</a>");
+if (empty($_SESSION['habid'])) {
+    header('Location: dashboard.html');
+    exit;
+}
+$HABID = $_SESSION['habid'];
+
+$NombreH   = trim($_POST['NombreH']   ?? '');
+$ApellidoH = trim($_POST['ApellidoH'] ?? '');
+$CI        = trim($_POST['CI']        ?? '');
+
+if ($NombreH === '' || $ApellidoH === '' || $CI === '') {
+    die('Completa todos los campos. <a href="dashboard.html">Volver</a>');
 }
 
-$nombre = trim($_POST['nombre']);
-$fecha = trim($_POST['fecha']);
-$cedula = trim($_POST['cedula']);
+$stmt = $pdo->prepare(
+  'UPDATE Habitante 
+      SET NombreH   = ?, 
+          ApellidoH = ?, 
+          CI        = ?
+    WHERE HABID = ?'
+);
+$stmt->execute([$NombreH, $ApellidoH, $CI, $HABID]);
 
-$archivo = "usuarios/$usuario.txt";
+echo 'Perfil actualizado. <a href="dashboard.html">Ir al inicio</a>';
 
-$datos = file($archivo);
-$passwordHash = trim($datos[1]);
-
-$contenido = "$usuario\n$passwordHash\n$nombre\n$fecha\n$cedula\n";
-file_put_contents($archivo, $contenido);
-
-echo "Datos guardados correctamente. <a href='dashboard.html'>Volver</a>";
-?>

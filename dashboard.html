@@ -14,16 +14,16 @@
         <h2>Datos Personales</h2>
         <form id="datos-form" action="guardar_datos.php" method="POST" onsubmit="return validarCedula()">
           <label>
-            Nombre:
-            <input type="text" name="nombre" required>
+            Primer nombre:
+            <input type="text" name="NombreH" required>
           </label>
           <label>
-            Fecha de nacimiento:
-            <input type="date" name="fecha" required>
+            Primer apellido:
+            <input type="text" name="ApellidoH" required>
           </label>
           <label>
-            Cédula:
-            <input type="number" name="cedula" id="cedula" required>
+            Cédula de indentidad:
+            <input type="number" name="CI" id="cedula" required>
           </label>
           <button type="submit">Guardar Datos</button>
         </form>
@@ -32,10 +32,6 @@
         </form>
       </div>
       
-      <form action="eliminar.php" method="POST" class="eliminar-form">
-        <button type="submit" class="eliminar-btn">Eliminar Usuario</button>
-      </form>
-      
     </div>
     <div class="decoracion"></div>
   </div>
@@ -43,12 +39,13 @@
   <script>
     function validarCedula() {
       const cedula = document.getElementById("cedula").value;
-      if (!/^\d{7}$/.test(cedula)) {
-        alert("La cédula debe contener exactamente 7 dígitos.");
+      if (!/^\d{8}$/.test(cedula)) {
+        alert("La cédula debe contener exactamente 8 dígitos.");
         return false;
       }
       return true;
     }
   </script>
 </body>
+
 </html>

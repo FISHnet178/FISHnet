@@ -82,27 +82,6 @@ body, html {
   background-color: #003060;
 }
 
-.eliminar-form {
-  width: 100%;
-  max-width: 300px;
-  margin-bottom: 20px;
-}
-
-.eliminar-btn {
-  width: 100%;
-  padding: 10px;
-  background-color: #b00020;
-  color: #fff;
-  border: none;
-  font-size: 1em;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.eliminar-btn:hover {
-  background-color: #90001a;
-}
-
 .decoracion {
   flex: 1;
   background: repeating-linear-gradient(
