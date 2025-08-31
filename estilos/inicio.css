@@ -1,0 +1,141 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+body {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+.menu {
+  display: none;
+  position: absolute;
+  top: 110px;
+  right: 20px;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  padding: 10px;
+  z-index: 100;
+}
+
+.menu a {
+  display: block;
+  margin-bottom: 10px;
+  text-decoration: none;
+  color: #004080;
+}
+
+header {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-image: url(solidaridad.jpeg);
+  background-size: cover;
+  background-position: center;
+  color: white;
+  padding: 20px 20px;
+}
+
+.logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.perfil {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.foto-user {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+}
+
+.nombre-user {
+  font-weight: bold;
+}
+
+main {
+  display: flex;
+  padding: 2rem;
+  gap: 2rem;
+}
+
+.botones {
+  border: 3px solid #aaa;
+  border-radius: 12px;
+  padding: 4rem;
+  background-color: #f9f9f9;
+  width: fit-content;
+  margin: 1rem auto;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.grid-botones {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5rem;
+  margin-top: 1rem;
+}
+
+.btn {
+  background-color: #ddd;
+  border: 2px solid #bbb;
+  border-radius: 10px;
+  padding: 2rem 2rem;
+  text-align: center;
+  text-decoration: none;
+  font-weight: bold;
+  color: #333;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 150px;
+  width: 150px;
+}
+
+.btn:hover {
+  background-color: #ccc;
+}
+
+.actividades {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.actividad {
+  background-color: #e0e0e0;
+  padding: 1rem;
+  border: 1px solid #bbb;
+  border-radius: 8px;
+}

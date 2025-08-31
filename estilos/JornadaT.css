@@ -1,0 +1,94 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Arial, sans-serif;
+}
+
+.contenedor {
+  display: flex;
+  height: 100vh;
+}
+
+.dashboard-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.center-block {
+  margin: auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.center-block h2 {
+  color: #004080;
+  font-size: 24px;
+  margin: 0;
+}
+
+#datos-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+#datos-form label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9em;
+}
+
+#datos-form input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  font-size: 1em;
+}
+
+#datos-form button {
+  padding: 10px;
+  background-color: #004080;
+  color: #fff;
+  border: none;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#datos-form button:hover {
+  background-color: #003060;
+}
+
+.inicio button {
+  margin-top: 10px;
+  padding: 10px;
+  width: 100%;
+  background-color: #004080;
+  color: #fff;
+  border: none;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.inicio button:hover {
+  background-color: #003060;
+}
+
+.decoracion {
+  flex: 1;
+  background: repeating-linear-gradient(
+    -45deg,
+    #004080,
+    #004080 15px,
+    #84a3f7 15px,
+    #84a3f7 30px
+  );
+}
