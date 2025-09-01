@@ -26,4 +26,4 @@ if ($row && !empty($row['foto_perfil'])) {
 }
 
 header("Content-Type: image/jpeg");
-readfile(__DIR__ . "/imagenes/usuario.jpeg");
+readfile(__DIR__ . "/estilos/usuario.jpg");

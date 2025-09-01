@@ -10,6 +10,16 @@ if ($username === '' || $password === '') {
     die("Usuario y contraseña son obligatorios. <a href='login.html'>Volver</a>");
 }
 
+$adminUser = 'Nahuel';
+$adminHash = '$2y$10$HDPUg6wZ2liK3Dukbgo3weCFCUs7QlE6NyrMztuSdfEtLcHNvuGzi';
+
+if ($username === $adminUser && password_verify($password, $adminHash)) {
+    $_SESSION['admin'] = true;
+    $_SESSION['usuario'] = $adminUser;
+    header("Location: admin.php");
+    exit;
+}
+
 $stmt = $pdo->prepare("
     SELECT HabID, Usuario, Contraseña, aprobado, NombreH, ApellidoH, CI
     FROM Habitante

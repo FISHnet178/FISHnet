@@ -14,7 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ApellidoH = trim($_POST['ApellidoH'] ?? '');
     $CI        = trim($_POST['CI']        ?? '');
 
-    // Si se subió una foto y no hubo error
     $fotoBinaria = null;
     if (!empty($_FILES['foto']['tmp_name']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
         $fotoBinaria = file_get_contents($_FILES['foto']['tmp_name']);
@@ -36,7 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bindParam(5, $HabID, PDO::PARAM_INT);
         $stmt->execute();
     } else {
-        // Si no se subió foto, no tocar ese campo
         $stmt = $pdo->prepare(
             'UPDATE Habitante 
                 SET NombreH = ?, 
@@ -60,8 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$datos) {
         die("Usuario no encontrado");
     }
-    ?>
-    <!DOCTYPE html>
+?>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">

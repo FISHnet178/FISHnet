@@ -37,7 +37,7 @@ $nombreH = $_SESSION['nombreH'];
     <section class="botones">
       <div class="grid-botones">
         <a href="JornadaT.html" class="btn">Registrar horas de trabajo</a>
-        <a href="Comp.html" class="btn">Subir comprobantes de pago</a>
+        <a href="comprobantes.php" class="btn">Subir comprobantes de pago</a>
         <a href="pagina3.html" class="btn">Botón 3</a>
         <a href="pagina4.html" class="btn">Botón 4</a>
         <a href="pagina5.html" class="btn">Botón 5</a>
