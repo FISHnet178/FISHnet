@@ -1,9 +1,10 @@
 <?php
 $host     = 'localhost';
-$dbname   = 'cooperativa';
-$user     = 'root';
-$password = '';
-$dsn      = "mysql:host={$host};dbname={$dbname};charset=utf8mb4";
+$port     = 3306;
+$dbname   = 'Cooperativa';
+$user     = 'Nahuel';
+$password = 'River178334$';
+$dsn      = "mysql:host={$host};port={$port};dbname={$dbname};charset=utf8mb4";
 
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
