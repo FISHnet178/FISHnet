@@ -12,15 +12,13 @@ services:
     build: .
     ports:
       - 81:80
-    links:
-      - proyecto2db
   proyecto2db:
     image: mysql
     ports:
       - 3178:3306
     environment:
       MYSQL_ROOT_PASSWORD:
-      MYSQL_DATABASE: Cooperativa
+      MYSQL_DATABASE: sqlCooperativa
       MYSQL_USER: Nahuel
       MYSQL_PASSWORD: River178334$
       MYSQL_ALLOW_EMPTY_PASSWORD: yes

@@ -21,7 +21,7 @@ if ($username === $adminUser && password_verify($password, $adminHash)) {
 }
 
 $stmt = $pdo->prepare("
-    SELECT HabID, Usuario, Contraseña, aprobado, NombreH, ApellidoH, CI
+    SELECT HabID, Usuario, Contrasena, aprobado, NombreH, ApellidoH, CI
     FROM Habitante
     WHERE Usuario = ?
 ");
@@ -36,7 +36,7 @@ if ((int)$user['aprobado'] === 0) {
     die("Usuario no aprobado. <a href='Index.html'>Inicio</a>");
 }
 
-if (!password_verify($password, $user['Contraseña'])) {
+if (!password_verify($password, $user['Contrasena'])) {
     die("Credenciales inválidas. <a href='login.html'>Volver</a>");
 }
 

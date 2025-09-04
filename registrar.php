@@ -15,7 +15,7 @@ if ($stmt->fetch()) {
 }
 
 $hash = password_hash($Contrasena, PASSWORD_DEFAULT);
-$stmt = $pdo->prepare('INSERT INTO Habitante (Usuario, Contraseña) VALUES (?, ?)');
+$stmt = $pdo->prepare('INSERT INTO Habitante (Usuario, Contrasena) VALUES (?, ?)');
 $stmt->execute([$Usuario, $hash]);
 
 echo '<p>¡Registro exitoso!</p>';
