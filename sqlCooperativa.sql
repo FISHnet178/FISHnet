@@ -89,3 +89,6 @@ CREATE TABLE Es_Asignado (
     FOREIGN KEY (HabID) REFERENCES Habitante(HABID), 
     FOREIGN KEY (UnidadID) REFERENCES UnidadHabitacional(UnidadID) 
 );
+
+INSERT INTO Habitante (Usuario, Contrasena, aprobado) VALUES 
+('Nahuel', '$2y$10$e0NRG8m7rYk1b5r9H1mE8uJ8Fz8eFz8eFz8eFz8eFz8eFz8eFz8eFz8e', 1);
