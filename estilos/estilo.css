@@ -51,15 +51,24 @@ body, html {
   flex: 1;
   background-color: #fff;
   border-radius: 8px;
-  padding: 20px;
+  padding: 20px 30px; /* 20px arriba/abajo, 30px a los costados */
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   overflow-y: auto;
+  max-height: calc(100vh - 100px);
+  position: relative;
 }
 
+
 .panel-column h2 {
-  margin-top: 0;
-  margin-bottom: 20px;
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  padding: 16px 20px;
+  margin: 0;
   color: #004080;
+  font-size: 1.4em;
+  z-index: 10;
+  border-bottom: 1px solid #ccc;
 }
 
 .panel-column ul {
