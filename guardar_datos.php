@@ -49,9 +49,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   if (!isset($_SESSION['perfil_actualizado']) || !$_SESSION['perfil_actualizado']) {
     $_SESSION['perfil_actualizado'] = true;
-    echo 'Datos guardados correctamente. <a href="inicio.php">Ir al inicio</a>';
+    echo 'Datos guardados correctamente. <a href="Inicio.php">Ir al inicio</a>';
   } else {
-    echo 'Perfil actualizado. <a href="inicio.php">Ir al inicio</a>';
+    echo 'Perfil actualizado. <a href="Inicio.php">Ir al inicio</a>';
   }
   exit;
 } else {

@@ -125,9 +125,10 @@ $pendientesComprobantes = $pdo->query("
             <form action="index.html" method="get">
                 <button type="button" onclick="location.href='index.html'">Cerrar sesión</button>
             </form>
-            <form action="inicio.php" method="get">
+            <form action="Inicio.php" method="post">
                 <button type="submit">Ir a inicio</button>
             </form>
+
         </div>
     </div>
     <div class="decoracion"></div>

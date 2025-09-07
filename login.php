@@ -44,7 +44,7 @@ $_SESSION['perfil_actualizado'] =
     !empty($user['CI']);
 
 if ($_SESSION['perfil_actualizado']) {
-    header("Location: inicio.php");
+    header("Location: Inicio.php");
     } else {
     header("Location: guardar_datos.php");
 }
