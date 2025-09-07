@@ -8,23 +8,23 @@
 # database or a cache. For examples, see the Awesome Compose repository:
 # https://github.com/docker/awesome-compose
 services:
-  proyecto2:
+  fishnet:
     build: .
     ports:
       - 81:80
-  proyecto2db:
+  fishnet-db:
     image: mysql
     ports:
       - 3178:3306
     environment:
       MYSQL_ROOT_PASSWORD:
-      MYSQL_DATABASE: sqlCooperativa
+      MYSQL_DATABASE: Cooperativa
       MYSQL_USER: Nahuel
       MYSQL_PASSWORD: River178334$
       MYSQL_ALLOW_EMPTY_PASSWORD: yes
     
     volumes:
-      - db-data:/var/lib/mysql
+      - ./migraciones/initdb:/docker-entrypoint-initdb.d
 
 
 volumes:

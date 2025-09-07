@@ -1,5 +1,5 @@
 <?php
-$host     = 'localhost';
+$host     = 'fishnet-db';
 $port     = 3306;
 $dbname   = 'Cooperativa';
 $user     = 'Nahuel';

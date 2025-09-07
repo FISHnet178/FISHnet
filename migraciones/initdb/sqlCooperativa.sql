@@ -1,4 +1,7 @@
-CREATE TABLE Terreno ( 
+CREATE DATABASE IF NOT EXISTS Cooperativa;
+USE Cooperativa;
+
+CREATE TABLE IF NOT EXISTS Terreno ( 
     TerrID INT AUTO_INCREMENT PRIMARY KEY, 
     NombreT VARCHAR(50) NOT NULL, 
     FechaConstruccion DATE NOT NULL, 
@@ -7,7 +10,7 @@ CREATE TABLE Terreno (
     NumeroPuerta INT NOT NULL 
 );
 
-CREATE TABLE UnidadHabitacional ( 
+CREATE TABLE IF NOT EXISTS UnidadHabitacional ( 
     UnidadID INT AUTO_INCREMENT PRIMARY KEY, 
     TerrID INT UNIQUE NOT NULL, 
     NumeroU INT NOT NULL, 
@@ -16,7 +19,7 @@ CREATE TABLE UnidadHabitacional (
     FOREIGN KEY (TerrID) REFERENCES Terreno(TerrID) 
 );
 
-CREATE TABLE Habitante ( 
+CREATE TABLE IF NOT EXISTS Habitante ( 
     HABID INT AUTO_INCREMENT PRIMARY KEY, 
     Usuario VARCHAR(30) NOT NULL, 
     Contrasena VARCHAR(255) NOT NULL, 
@@ -31,7 +34,7 @@ CREATE TABLE Habitante (
     FOREIGN KEY (UnidadID) REFERENCES UnidadHabitacional(UnidadID) 
 );
 
-CREATE TABLE SalonComunal ( 
+CREATE TABLE IF NOT EXISTS SalonComunal ( 
     SalonID INT PRIMARY KEY, 
     TerrID INT UNIQUE NOT NULL, 
     Estado VARCHAR(30) NOT NULL, 
@@ -41,7 +44,7 @@ CREATE TABLE SalonComunal (
     FOREIGN KEY (TerrID) REFERENCES Terreno(TerrID) 
 );
 
-CREATE TABLE Jornadas ( 
+CREATE TABLE IF NOT EXISTS Jornadas ( 
     JorID INT AUTO_INCREMENT PRIMARY KEY, 
     Tipo VARCHAR(30) NOT NULL, 
     Horas INT NOT NULL, 
@@ -49,14 +52,14 @@ CREATE TABLE Jornadas (
     FechaFin DATE NULL 
 );
 
-CREATE TABLE PagoCuota ( 
+CREATE TABLE IF NOT EXISTS PagoCuota ( 
     PagoID INT AUTO_INCREMENT PRIMARY KEY, 
     Comprobante LONGBLOB NOT NULL,
     AprobadoP TINYINT(1) NULL, 
     fecha_aprobacionP TINYINT(1) NULL 
 );
 
-CREATE TABLE Realizan ( 
+CREATE TABLE IF NOT EXISTS Realizan ( 
     HabID INT NOT NULL, 
     JorID INT NOT NULL, 
     PRIMARY KEY (HabID, JorID), 
@@ -64,7 +67,7 @@ CREATE TABLE Realizan (
     FOREIGN KEY (JorID) REFERENCES Jornadas(JorID) 
 );
 
-CREATE TABLE Donde ( 
+CREATE TABLE IF NOT EXISTS Donde ( 
     HabID INT NOT NULL, 
     JorID INT NOT NULL, 
     TerrID INT NOT NULL, 
@@ -73,7 +76,7 @@ CREATE TABLE Donde (
     FOREIGN KEY (TerrID) REFERENCES Terreno(TerrID) 
 );
 
-CREATE TABLE Efectua_pago ( 
+CREATE TABLE IF NOT EXISTS Efectua_pago ( 
     HabID INT NOT NULL, 
     PagoID INT NOT NULL, 
     aprobadoEP TINYINT(1) NULL,
@@ -82,7 +85,7 @@ CREATE TABLE Efectua_pago (
     FOREIGN KEY (PagoID) REFERENCES PagoCuota(PagoID) 
 );
 
-CREATE TABLE Es_Asignado ( 
+CREATE TABLE IF NOT EXISTS Es_Asignado ( 
     HabID INT NOT NULL, 
     UnidadID INT NOT NULL, 
     PRIMARY KEY (HabID, UnidadID), 
