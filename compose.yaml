@@ -26,7 +26,6 @@ services:
     volumes:
       - ./migraciones/initdb:/docker-entrypoint-initdb.d
 
-
 volumes:
   db-data:
 
