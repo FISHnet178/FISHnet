@@ -10,46 +10,50 @@ if (empty($_SESSION['HABID'])) {
 $HabID = $_SESSION['HABID'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $NombreH   = trim($_POST['NombreH']   ?? '');
-    $ApellidoH = trim($_POST['ApellidoH'] ?? '');
-    $CI        = trim($_POST['CI']        ?? '');
+  $NombreH   = trim($_POST['NombreH']   ?? '');
+  $ApellidoH = trim($_POST['ApellidoH'] ?? '');
+  $CI        = trim($_POST['CI']        ?? '');
 
-    $fotoBinaria = null;
-    if (!empty($_FILES['foto']['tmp_name']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-        $fotoBinaria = file_get_contents($_FILES['foto']['tmp_name']);
-    }
+  $fotoBinaria = null;
+  if (!empty($_FILES['foto']['tmp_name']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+    $fotoBinaria = file_get_contents($_FILES['foto']['tmp_name']);
+  }
 
-    if ($fotoBinaria !== null) {
-        $stmt = $pdo->prepare(
-            'UPDATE Habitante 
-                SET NombreH = ?, 
-                    ApellidoH = ?, 
-                    CI = ?, 
-                    foto_perfil = ?
-              WHERE HabID = ?'
-        );
-        $stmt->bindParam(1, $NombreH);
-        $stmt->bindParam(2, $ApellidoH);
-        $stmt->bindParam(3, $CI);
-        $stmt->bindParam(4, $fotoBinaria, PDO::PARAM_LOB);
-        $stmt->bindParam(5, $HabID, PDO::PARAM_INT);
-        $stmt->execute();
-    } else {
-        $stmt = $pdo->prepare(
-            'UPDATE Habitante 
-                SET NombreH = ?, 
-                    ApellidoH = ?, 
-                    CI = ?
-              WHERE HabID = ?'
-        );
-        $stmt->execute([$NombreH, $ApellidoH, $CI, $HabID]);
-    }
+  if ($fotoBinaria !== null) {
+    $stmt = $pdo->prepare(
+      'UPDATE Habitante 
+        SET NombreH = ?, 
+          ApellidoH = ?, 
+          CI = ?, 
+          foto_perfil = ?
+        WHERE HabID = ?'
+    );
+    $stmt->bindParam(1, $NombreH);
+    $stmt->bindParam(2, $ApellidoH);
+    $stmt->bindParam(3, $CI);
+    $stmt->bindParam(4, $fotoBinaria, PDO::PARAM_LOB);
+    $stmt->bindParam(5, $HabID, PDO::PARAM_INT);
+    $stmt->execute();
+  } else {
+    $stmt = $pdo->prepare(
+      'UPDATE Habitante 
+        SET NombreH = ?, 
+          ApellidoH = ?, 
+          CI = ?
+        WHERE HabID = ?'
+    );
+    $stmt->execute([$NombreH, $ApellidoH, $CI, $HabID]);
+  }
 
+  $_SESSION['nombreH'] = $NombreH;
+
+  if (!isset($_SESSION['perfil_actualizado']) || !$_SESSION['perfil_actualizado']) {
     $_SESSION['perfil_actualizado'] = true;
-    $_SESSION['nombreH'] = $NombreH;
-
+    echo 'Datos guardados correctamente. <a href="inicio.php">Ir al inicio</a>';
+  } else {
     echo 'Perfil actualizado. <a href="inicio.php">Ir al inicio</a>';
-    exit;
+  }
+  exit;
 } else {
     $stmt = $pdo->prepare('SELECT NombreH, ApellidoH, CI, foto_perfil FROM Habitante WHERE HabID = ?');
     $stmt->execute([$HabID]);
@@ -57,7 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$datos) {
         die("Usuario no encontrado");
-    }
+  }
+
 ?>
 <!DOCTYPE html>
 <html lang="es">

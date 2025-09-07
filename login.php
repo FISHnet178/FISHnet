@@ -10,16 +10,6 @@ if ($username === '' || $password === '') {
     die("Usuario y contraseña son obligatorios. <a href='login.html'>Volver</a>");
 }
 
-$adminUser = 'Nahuel';
-$adminHash = '$2y$10$HDPUg6wZ2liK3Dukbgo3weCFCUs7QlE6NyrMztuSdfEtLcHNvuGzi';
-
-if ($username === $adminUser && password_verify($password, $adminHash)) {
-    $_SESSION['admin'] = true;
-    $_SESSION['usuario'] = $adminUser;
-    header("Location: admin.php");
-    exit;
-}
-
 $stmt = $pdo->prepare("
     SELECT HabID, Usuario, Contrasena, aprobado, NombreH, ApellidoH, CI
     FROM Habitante
@@ -28,9 +18,15 @@ $stmt = $pdo->prepare("
 $stmt->execute([$username]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+$_SESSION['HABID'] = $user['HabID'];
+$_SESSION['usuario'] = $user['Usuario'];
+$_SESSION['nombreH'] = $user['NombreH'];
+
 if (!$user) {
     die("Credenciales inválidas. <a href='login.html'>Volver</a>");
 }
+
+$_SESSION['admin'] = ($user['HabID'] == 1);
 
 if ((int)$user['aprobado'] === 0) {
     die("Usuario no aprobado. <a href='Index.html'>Inicio</a>");
@@ -40,9 +36,7 @@ if (!password_verify($password, $user['Contrasena'])) {
     die("Credenciales inválidas. <a href='login.html'>Volver</a>");
 }
 
-$_SESSION['HABID'] = $user['HabID'];
-$_SESSION['usuario'] = $user['Usuario'];
-$_SESSION['nombreH'] = $user['NombreH'];
+
 
 $_SESSION['perfil_actualizado'] = 
     !empty($user['NombreH']) && 
@@ -51,7 +45,7 @@ $_SESSION['perfil_actualizado'] =
 
 if ($_SESSION['perfil_actualizado']) {
     header("Location: inicio.php");
-} else {
+    } else {
     header("Location: guardar_datos.php");
 }
 
