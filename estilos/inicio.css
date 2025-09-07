@@ -11,28 +11,76 @@ body {
 }
 
 .menu-btn {
-  background: none;
+  background: rgba(0, 64, 128, 0.85);
   border: none;
-  color: white;
-  font-size: 1.2em;
+  color: #fff;
+  font-size: 1.5em;
   cursor: pointer;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(0,64,128,0.10);
+}
+
+.menu-btn:hover, .menu-btn:focus {
+  background: #0056b3;
+  box-shadow: 0 4px 16px rgba(0,64,128,0.15);
+  outline: none;
 }
 
 .menu {
-  display: none;
   position: absolute;
-  top: 110px;
+  top: 80px;
   right: 20px;
-  background-color: #eee;
-  border: 1px solid #ccc;
-  padding: 10px;
+  background: linear-gradient(135deg, #f8fbff 80%, #e6f0fa 100%);
+  border: 1px solid #b3c6e0;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 64, 128, 0.10);
+  display: none;
+  flex-direction: column;
+  min-width: 200px;
   z-index: 100;
+  overflow: hidden;
+  animation: menuFadeIn 0.25s ease;
+}
+
+@keyframes menuFadeIn {
+  from { opacity: 0; transform: translateY(-10px);}
+  to { opacity: 1; transform: translateY(0);}
 }
 
 .menu a {
-  display: block;
-  margin-bottom: 10px;
+  padding: 14px 20px;
   text-decoration: none;
+  color: #004080;
+  font-weight: 600;
+  font-size: 1.05em;
+  transition: background 0.2s, color 0.2s;
+  border-bottom: 1px solid #e6f0fa;
+  margin: 4px 0; 
+  display: block;
+}
+
+.menu a:last-child {
+  border-bottom: none;
+}
+
+.menu a:hover, .menu a:focus {
+  background: #e6f0fa;
+  color: #003366;
+  outline: none;
+}
+
+.perfil {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: bold;
   color: #004080;
 }
 

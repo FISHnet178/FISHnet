@@ -19,6 +19,15 @@ $stmt = $pdo->prepare('INSERT INTO Habitante (Usuario, Contrasena) VALUES (?, ?)
 $stmt->execute([$Usuario, $hash]);
 
 echo '<p>¡Registro exitoso!</p>';
+$stmt = $pdo->prepare('UPDATE Habitante SET aprobado = 1 WHERE HABID = 1');
+$stmt->execute();
+$stmt = $pdo->prepare('SELECT aprobado FROM Habitante WHERE Usuario = ?');
+$stmt->execute([$Usuario]);
+$row = $stmt->fetch();
+if ($row && $row['aprobado'] == 1) {
+    echo '<p>Tu cuenta ya está aprobada. Puedes iniciar sesión.</p>';
+}else {
 echo '<p>Espera a ser aprobado.</p>';
+}
 echo '<p><a href="index.html">Volver</a></p>';
 exit;

@@ -1,5 +1,5 @@
 <?php
-$host     = 'proyecto2db';
+$host     = 'localhost';
 $port     = 3306;
 $dbname   = 'Cooperativa';
 $user     = 'Nahuel';

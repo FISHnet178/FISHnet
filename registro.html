@@ -1,30 +1,31 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Registro</title>
-  <link rel="stylesheet" href="estilos/registro.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>Registro</title>
+    <link rel="stylesheet" href="estilos/registro.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-  <div class="contenedor">
-    <div class="registro-form">
-      <h2>Registro</h2>
-      <form action="registrar.php" method="POST">
-        <label>
-          Usuario:
-          <input type="text" name="Usuario" required>
-        </label>
-        <label>
-          Contraseña:
-          <input type="password" name="Contraseña" required>
-        </label>
-        <button type="submit">Registrarse</button>
-      </form>
-      <p><a class="volver-btn" href="index.html">← Volver al inicio</a></p>
+    <div class="contenedor">
+        <div class="registro-form">
+            <h2>Registro</h2>
+            <form action="registrar.php" method="POST">
+                <label>
+                    Usuario:
+                    <input type="text" name="Usuario" required>
+                </label>
+                <label>
+                    Contraseña:
+                    <input type="password" name="Contraseña" required>
+                </label>
+                <button type="submit">Registrarse</button>
+            </form>
+            <p>
+                <a class="volver-btn" href="index.html">← Volver al inicio</a>
+            </p>
+        </div>
+        <div class="decoracion"></div>
     </div>
-
-    <div class="decoracion"></div>
-  </div>
 </body>
 </html>
