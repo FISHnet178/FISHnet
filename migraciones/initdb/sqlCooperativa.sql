@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS PagoCuota (
     PagoID INT AUTO_INCREMENT PRIMARY KEY, 
     Comprobante LONGBLOB NOT NULL,
     AprobadoP TINYINT(1) NULL, 
-    fecha_aprobacionP TINYINT(1) NULL 
+    fecha_aprobacionP DATE NULL 
 );
 
 CREATE TABLE IF NOT EXISTS Realizan ( 
