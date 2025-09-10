@@ -92,3 +92,29 @@ CREATE TABLE IF NOT EXISTS Es_Asignado (
     FOREIGN KEY (HabID) REFERENCES Habitante(HABID), 
     FOREIGN KEY (UnidadID) REFERENCES UnidadHabitacional(UnidadID) 
 );
+
+CREATE TABLE IF NOT EXISTS Postulaciones (
+  PosID INT AUTO_INCREMENT PRIMARY KEY,
+  HabID INT,
+  nombre VARCHAR(255),
+  email VARCHAR(255),
+  telefono VARCHAR(50),
+  fecha_nacimiento DATE,
+  habitante_uruguay ENUM('si','no'),
+  motivo TEXT,
+  comprobante_ingreso LONGBLOB,
+  comprobante_tipo VARCHAR(100),
+  cantidad_ingresan INT,
+  fecha_postulacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  FOREIGN KEY (HabID) REFERENCES Habitante(HABID) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS Integrantes (
+  IntID INT AUTO_INCREMENT PRIMARY KEY,
+  PosID INT,
+  nombre VARCHAR(100),
+  apellido VARCHAR(100),
+  edad INT,
+  ci VARCHAR(20),
+  FOREIGN KEY (PosID) REFERENCES postulaciones(PosID) ON DELETE CASCADE
+);

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Postulación a Cooperativa</title>
+  <link rel="stylesheet" href="estilos/postulacion.css">
+  <script>
+    function mostrarIntegrantes() {
+      const cantidad = parseInt(document.getElementById("cantidad_ingresan").value);
+      const contenedor = document.getElementById("integrantes_extra");
+      contenedor.innerHTML = "";
+
+      if (cantidad > 1) {
+        for (let i = 1; i < cantidad; i++) {
+          contenedor.innerHTML += `
+            <fieldset>
+              <legend>Integrante ${i}</legend>
+              <label>Nombre:</label><input type="text" name="nombre_integrante_${i}" required><br>
+              <label>Apellido:</label><input type="text" name="apellido_integrante_${i}" required><br>
+              <label>Edad:</label><input type="number" name="edad_integrante_${i}" required><br>
+              <label>Cédula:</label><input type="text" name="ci_integrante_${i}" required><br>
+            </fieldset><br>
+          `;
+        }
+      }
+    }
+  </script>
+</head>
+<body>
+  <h2>Formulario de Postulación</h2>
+  <form action="postulacion.php" method="POST" enctype="multipart/form-data">
+    <label>Nombre completo:</label><br>
+    <input type="text" name="nombre" required><br><br>
+
+    <label>Teléfono:</label><br>
+    <input type="text" name="telefono"><br><br>
+
+    <label>Fecha de nacimiento:</label><br>
+    <input type="date" name="fecha_nacimiento" required><br><br>
+
+    <label>¿Es habitante permanente de la República Oriental del Uruguay?</label><br>
+    <select name="habitante_uruguay" required>
+      <option value="">Seleccione</option>
+      <option value="si">Sí</option>
+      <option value="no">No</option>
+    </select><br><br>
+
+    <label>Motivo de postulación:</label><br>
+    <textarea name="motivo" rows="4" cols="50" required></textarea><br><br>
+
+    <label>Comprobante de ingreso familiar (PDF/JPG/PNG):</label><br>
+    <input type="file" name="comprobante_ingreso" accept=".pdf,.jpg,.jpeg,.png" required><br><br>
+
+    <label>Cantidad de personas que ingresarán:</label><br>
+    <input type="number" name="cantidad_ingresan" id="cantidad_ingresan" min="1" required onchange="mostrarIntegrantes()"><br><br>
+
+    <div id="integrantes_extra"></div>
+
+    <input type="submit" value="Enviar postulación">
+  </form>
+</body>
+</html>
