@@ -3,8 +3,9 @@ require 'config.php';
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $habID = $_SESSION['HABID'] ?? null;
-    if (!$habID) { die("Debes estar registrado para postularte."); 
+    $stmtHab = $pdo->query("SELECT HABID FROM Habitante ORDER BY HABID DESC LIMIT 1");
+    $habID = $stmtHab->fetchColumn();
+    if (!$habID) { die("Debes estar registrado para postularte."); }
     $nombre = $_POST["nombre"];
     $telefono = $_POST["telefono"];
     $fecha_nacimiento = $_POST["fecha_nacimiento"];
@@ -12,20 +13,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $motivo = $_POST["motivo"];
     $cantidad = intval($_POST["cantidad_ingresan"]);
 
-    // Validar residencia
     if ($habitante_uruguay !== "si") {
         die("Solo pueden postularse habitantes permanentes de Uruguay.");
     }
 
-    // Procesar comprobante de ingreso
     $comprobante = null;
-    $comprobante_tipo = null;
     if (isset($_FILES["comprobante_ingreso"]) && $_FILES["comprobante_ingreso"]["error"] === UPLOAD_ERR_OK) {
         $comprobante = file_get_contents($_FILES["comprobante_ingreso"]["tmp_name"]);
-        $comprobante_tipo = $_FILES["comprobante_ingreso"]["type"];
     }
 
-    // Validación de edad entre hijos
     $edades = [];
     for ($i = 1; $i < $cantidad; $i++) {
         $edad = intval($_POST["edad_integrante_$i"]);
@@ -39,10 +35,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
 
-    // Insertar postulación principal
     $stmt = $pdo->prepare("INSERT INTO Postulaciones 
-        (HabID, nombre, telefono, fecha_nacimiento, habitante_uruguay, motivo, comprobante_ingreso, comprobante_tipo, cantidad_ingresan) 
-        VALUES (:HabID, :nombre, :telefono, :fecha_nacimiento, :habitante_uruguay, :motivo, :comprobante, :comprobante_tipo, :cantidad)");
+        (HabID, nombre, telefono, fecha_nacimiento, habitante_uruguay, motivo, comprobante_ingreso, cantidad_ingresan) 
+        VALUES (:HabID, :nombre, :telefono, :fecha_nacimiento, :habitante_uruguay, :motivo, :comprobante, :cantidad)");
 
     $stmt->bindParam(":HabID", $habID);
     $stmt->bindParam(":nombre", $nombre);
@@ -51,13 +46,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt->bindParam(":habitante_uruguay", $habitante_uruguay);
     $stmt->bindParam(":motivo", $motivo);
     $stmt->bindParam(":comprobante", $comprobante, PDO::PARAM_LOB);
-    $stmt->bindParam(":comprobante_tipo", $comprobante_tipo);
     $stmt->bindParam(":cantidad", $cantidad);
     $stmt->execute();
 
     $PosID = $pdo->lastInsertId();
 
-    // Insertar integrantes adicionales
     for ($i = 1; $i < $cantidad; $i++) {
         $nombre_i = $_POST["nombre_integrante_$i"];
         $apellido_i = $_POST["apellido_integrante_$i"];
@@ -76,7 +69,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt_i->execute();
     }
 
-    echo "Postulación enviada correctamente.";
+    echo "Postulación enviada correctamente.<br>";
+    echo "Espera a ser aprobado. <a href='index.html'>Volver</a>";
     }
-}
+
 ?>

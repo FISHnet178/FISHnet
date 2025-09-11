@@ -1,6 +1,5 @@
 <?php
 require 'config.php';
-session_start();
 
 $Usuario    = trim($_POST['Usuario']    ?? '');
 $Contrasena = trim($_POST['Contraseña'] ?? '');
@@ -18,10 +17,6 @@ if ($stmt->fetch()) {
 $hash = password_hash($Contrasena, PASSWORD_DEFAULT);
 $stmt = $pdo->prepare('INSERT INTO Habitante (Usuario, Contrasena) VALUES (?, ?)');
 $stmt->execute([$Usuario, $hash]);
-$stmt = $pdo->prepare('SELECT HABID FROM Habitante WHERE Usuario = ?');
-$stmt->execute([$Usuario]);
-$habid = $stmt->fetchColumn();
-$_SESSION['habid'] = $habid;
 
 echo '<p>¡Registro exitoso!</p>';
 $stmt = $pdo->prepare('UPDATE Habitante SET aprobado = 1 WHERE HABID = 1');
@@ -34,7 +29,6 @@ if ($row && $row['aprobado'] == 1) {
     echo '<p><a href="index.html">Volver</a></p>';
     exit;
 }else {
-    header("Location: postulacion.html");
+    header ('Location: postulacion.html');
     exit;
 }
-

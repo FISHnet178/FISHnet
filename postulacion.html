@@ -27,7 +27,10 @@
   </script>
 </head>
 <body>
-  <h2>Formulario de Postulación</h2>
+  
+  <div class="contenedor">
+  <div class="form">
+    <h2>Formulario de Postulación</h2>
   <form action="postulacion.php" method="POST" enctype="multipart/form-data">
     <label>Nombre completo:</label><br>
     <input type="text" name="nombre" required><br><br>
@@ -56,7 +59,11 @@
 
     <div id="integrantes_extra"></div>
 
-    <input type="submit" value="Enviar postulación">
+    <button type="submit">Enviar postulación</button>
+    
+    </div>
+    <div class="decoracion"></div>
+  </div>
   </form>
 </body>
 </html>

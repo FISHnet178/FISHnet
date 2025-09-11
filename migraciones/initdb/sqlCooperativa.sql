@@ -97,15 +97,13 @@ CREATE TABLE IF NOT EXISTS Postulaciones (
   PosID INT AUTO_INCREMENT PRIMARY KEY,
   HabID INT,
   nombre VARCHAR(255),
-  email VARCHAR(255),
   telefono VARCHAR(50),
   fecha_nacimiento DATE,
   habitante_uruguay ENUM('si','no'),
   motivo TEXT,
   comprobante_ingreso LONGBLOB,
-  comprobante_tipo VARCHAR(100),
   cantidad_ingresan INT,
-  fecha_postulacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  fecha_postulacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (HabID) REFERENCES Habitante(HABID) ON DELETE SET NULL
 );
 
