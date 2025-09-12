@@ -10,7 +10,6 @@ if (!isset($_SESSION['HABID'])) {
 
 $habID = intval($_SESSION['HABID']);
 
-// Consultar jornadas realizadas
 $sqlJornadas = "
     SELECT r.JorID, j.Tipo, j.FechaInicio, j.FechaFin
     FROM Realizan r
@@ -22,7 +21,6 @@ $stmtJornadas = $pdo->prepare($sqlJornadas);
 $stmtJornadas->execute([$habID]);
 $resultJornadas = $stmtJornadas->fetchAll(PDO::FETCH_ASSOC);
 
-// Consultar comprobantes de pago
 $sqlPagos = "
     SELECT ep.PagoID, pc.Comprobante, pc.AprobadoP, pc.fecha_aprobacionP
     FROM Efectua_pago ep
@@ -39,7 +37,7 @@ $resultPagos = $stmtPagos->fetchAll(PDO::FETCH_ASSOC);
 <html>
 <head>
     <title>Historial del Habitante</title>
-    <link rel="stylesheet" href="estilos/estilo.css">
+    <link rel="stylesheet" href="estilos/historial.css">
 </head>
 <body>
 <div class="contenedor">

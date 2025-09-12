@@ -1,0 +1,135 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Arial, sans-serif;
+  background-color: #f2f2f2;
+}
+
+.contenedor {
+  display: flex;
+  height: 100vh;
+}
+
+.decoracion {
+  flex: 1;
+  background: repeating-linear-gradient(
+    -45deg,
+    #004080,
+    #004080 15px,
+    #84a3f7 15px,
+    #84a3f7 30px
+  );
+}
+
+.dashboard-content {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.dashboard-content p a button {
+  padding: 8px 12px;
+  background-color: #004080;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.dashboard-content p a button:hover {
+  background-color: #003060;
+}
+
+.panel-columns {
+  display: flex;
+  gap: 40px;
+  flex: 1;
+  max-height: 90vh;
+}
+
+.panel-column {
+  flex: 1;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px 30px; /* 20px arriba/abajo, 30px a los costados */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  overflow-y: auto;
+  max-height: calc(100vh - 100px);
+  position: relative;
+}
+
+.panel-column h2 {
+  position: sticky;
+  background-color: #fff;
+  padding: 16px 20px;
+  top: -20px;
+  margin: 0;
+  color: #004080;
+  font-size: 1.4em;
+  z-index: 10;
+  border-bottom: 1px solid #ccc;
+}
+
+.panel-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.panel-column li {
+  background-color: #f9f9f9;
+  margin-bottom: 12px;
+  padding: 12px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.panel-column form button,
+.panel-column a button {
+  padding: 8px 12px;
+  background-color: #004080;
+  color: white;
+  border: none;
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.panel-column form button:hover,
+.panel-column a button:hover {
+  background-color: #003060;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px; 
+  margin-top: 8px;
+}
+
+.action-buttons form {
+  margin: 0;
+}
+
+.action-buttons button {
+  padding: 8px 12px;
+  background-color: #004080;
+  color: white;
+  border: none;
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.action-buttons button:hover {
+  background-color: #003060;
+}
+
+
+@media (max-width: 900px) {
+  .panel-columns {
+    flex-direction: column;
+  }
+}
