@@ -51,7 +51,7 @@ $nombreH = $_SESSION['nombreH'];
         </section>
 
         <section class="actividades">
-            <h2>ACTIVIDADES</h2>
+            <h2>Foro Cooperativa</h2>
             <div class="actividad">Actividad reciente 1</div>
             <div class="actividad">Actividad reciente 2</div>
         </section>
