@@ -86,10 +86,10 @@ $integrantes = $stmtInt->fetchAll(PDO::FETCH_ASSOC);
                     <tbody>
                         <?php foreach ($integrantes as $int): ?>
                             <tr>
-                                <td><?= htmlspecialchars($int['nombre']) ?></td>
-                                <td><?= htmlspecialchars($int['apellido']) ?></td>
-                                <td><?= intval($int['edad']) ?></td>
-                                <td><?= htmlspecialchars($int['ci']) ?></td>
+                                <th><?= htmlspecialchars($int['nombre']) ?></th>
+                                <th><?= htmlspecialchars($int['apellido']) ?></th>
+                                <th><?= intval($int['edad']) ?></th>
+                                <th><?= htmlspecialchars($int['ci']) ?></th>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
