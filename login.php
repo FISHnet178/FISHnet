@@ -18,9 +18,9 @@ $stmt = $pdo->prepare("
 $stmt->execute([$username]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$_SESSION['HABID'] = $user['HabID'];
-$_SESSION['usuario'] = $user['Usuario'];
-$_SESSION['nombreH'] = $user['NombreH'];
+$_SESSION['HABID']   = $user['HabID']   ?? null;
+$_SESSION['usuario'] = $user['Usuario'] ?? null;
+$_SESSION['nombreH'] = $user['NombreH'] ?? null;
 
 if (!$user) {
     die("Credenciales inválidas. <a href='login.html'>Volver</a>");
