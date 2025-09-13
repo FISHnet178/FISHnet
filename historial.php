@@ -81,10 +81,9 @@ $resultPagos = $stmtPagos->fetchAll(PDO::FETCH_ASSOC);
         </div>
 
         <div class="action-buttons">
-            <form action="inicio.php" method="get">
-                <button type="submit">Volver al Inicio</button>
-            </form>
+            <p><button class="inicio" onclick="window.location.href='Inicio.php'">← Volver al inicio</button></p>
         </div>
+
     </div>
     <div class="decoracion"></div>
 </div>
