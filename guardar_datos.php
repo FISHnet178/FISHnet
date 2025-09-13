@@ -80,22 +80,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form id="datos-form" action="" method="POST" enctype="multipart/form-data" onsubmit="return validarCedula()">
           <label>
             Primer nombre:
-            <input type="text" name="NombreH" value="<?php echo htmlspecialchars($datos['NombreH']); ?>" required>
+            <input type="text" name="NombreH" value="<?php echo htmlspecialchars($datos['NombreH'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
           </label>
           <label>
             Primer apellido:
-            <input type="text" name="ApellidoH" value="<?php echo htmlspecialchars($datos['ApellidoH']); ?>" required>
+            <input type="text" name="ApellidoH" value="<?php echo htmlspecialchars($datos['ApellidoH'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
           </label>
           <label>
             Cédula de identidad:
-            <input type="number" name="CI" id="cedula" value="<?php echo htmlspecialchars($datos['CI']); ?>" required>
+            <input type="number" name="CI" id="cedula" value="<?php echo htmlspecialchars($datos['CI'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
           </label>
           <label>
             Foto de perfil:
             <input type="file" name="foto" accept="image/*">
           </label>
 
-          <?php if (!empty($datos['foto_perfil'])): ?>
+          <?php if (!empty($datos['foto_perfil'] ?? null)): ?>
             <p>Foto actual:</p>
             <img src="mostrar_foto.php?id=<?php echo $HabID; ?>" alt="Foto de perfil" style="max-width:150px;">
           <?php endif; ?>
