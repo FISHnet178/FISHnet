@@ -8,6 +8,7 @@ body, html {
 
 .contenedor {
   display: flex;
+  min-height: 100vh;
 }
 
 .decoracion {

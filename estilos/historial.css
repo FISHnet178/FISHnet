@@ -110,10 +110,6 @@ body, html {
   margin-top: 8px;
 }
 
-.action-buttons form {
-  margin: 0;
-}
-
 .action-buttons button {
   padding: 8px 12px;
   background-color: #004080;
