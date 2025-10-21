@@ -43,6 +43,8 @@ $stmtInt = $pdo->prepare("
 ");
 $stmtInt->execute([':posid' => $posID]);
 $integrantes = $stmtInt->fetchAll(PDO::FETCH_ASSOC);
+
+$return = isset($_GET['return']) ? basename($_GET['return']) : 'admin.php';
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -96,9 +98,9 @@ $integrantes = $stmtInt->fetchAll(PDO::FETCH_ASSOC);
                 </table>
             <?php endif; ?>
         <div class="action-buttons" style="margin-top: 15px;">
-            <form action="admin.php" method="post">
-                <button type="submit">Ir a inicio</button>
-            </form>
+            <a href="<?php echo htmlspecialchars($return, ENT_QUOTES, 'UTF-8'); ?>">
+                <button type="button">Ir a inicio</button>
+            </a>
         </div>
         </div>
     <div class="decoracion"></div>

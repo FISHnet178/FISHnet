@@ -187,3 +187,64 @@ main {
   border: 1px solid #bbb;
   border-radius: 8px;
 }
+
+.foro-list {
+  max-height: 710px;
+  overflow: auto;
+  padding-right: 8px;
+}
+
+
+.post { 
+  border:1px solid #ddd;
+  padding:10px;
+  border-radius:6px; 
+  margin-bottom:10px; 
+  background:#fff; 
+}
+
+.post .titulo { 
+  font-weight:700; 
+  margin-bottom:6px; 
+}
+
+.post .meta { 
+  font-size:0.9em; 
+  color:#555; 
+  margin-bottom:8px; 
+}
+
+.sin-posts { 
+  color:#666; 
+}
+
+.perfil { 
+  display:flex; 
+  align-items:center; 
+  gap:10px; 
+  position:relative;
+}
+
+.menu { 
+  display:none; 
+  position:absolute; 
+  right:16px; 
+  background:#fff; 
+  border:1px solid #ddd; 
+  border-radius:6px; 
+  padding:8px; 
+}
+
+.btn-eliminar {
+  background:#dc3545;
+  color:#fff;
+  border:none;
+  padding:6px 10px;
+  border-radius:4px;
+  cursor:pointer;
+}
+
+.post { margin-bottom:16px; padding:12px; border:1px solid #e6e6e6; border-radius:6px; background:#fff; }
+.acciones .btn-responder, .acciones .btn-responder-inline { background:transparent; border:1px solid #0073e6; color:#0073e6; padding:6px 8px; border-radius:4px; cursor:pointer; text-decoration:none; }
+.respuestas .respuesta { margin-top:8px; }
+.reply-inline textarea { box-sizing:border-box; }

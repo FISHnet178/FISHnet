@@ -8,7 +8,7 @@ body, html {
 
 .contenedor {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
 }
 
 .decoracion {
@@ -46,16 +46,17 @@ body, html {
   display: flex;
   gap: 40px;
   flex: 1;
-  max-height: 90vh;
+  max-height: 90%;
 }
 
 .panel-column {
-  flex: 1;
+  flex: 1 1 0;
   background-color: #fff;
   border-radius: 8px;
-  padding: 20px 30px; /* 20px arriba/abajo, 30px a los costados */
+  padding: 20px 30px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   overflow-y: auto;
+  min-height: 0;
   max-height: calc(100vh - 100px);
   position: relative;
 }
@@ -122,6 +123,7 @@ body, html {
   font-size: 0.9em;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  border-radius:6px;
 }
 .action-buttons button:hover {
   background-color: #003060;
@@ -133,3 +135,22 @@ body, html {
     flex-direction: column;
   }
 }
+
+/* Flash */
+.flash { padding:10px; border-radius:6px; margin-bottom:12px; }
+.flash.success { background:#e6f7ea; color:#0b6b2d; border:1px solid #98e0b2; }
+.flash.error { background:#fdecea; color:#8a1f1f; border:1px solid #f2b8b8; }
+
+.small { font-size:0.9rem; color:#666; }
+.postulacion { background:#fcfdff; padding:10px; border-radius:6px; border:1px solid #eef3ff; }
+
+.btn-danger { background:#dc3545; color:#fff; }
+.btn-danger:hover { background:#b02a37; }
+.btn-secondary { background:#6c757d; color:#fff; }
+.btn-secondary:hover { background:#5a6268; }
+
+@media (max-width:900px) {
+  .panel-columns { flex-direction:column; gap:18px; }
+  .decoracion { display:none; }
+}
+
