@@ -89,7 +89,7 @@ try {
                 <a href="comprobantes.php" class="btn">Subir comprobantes de pago</a>
                 <a href="historial.php" class="btn">Historial de acciones</a>
                 <a href="foro.html" class="btn">Crear publicación</a>
-                <a href="pagina5.html" class="btn">Botón 5</a>
+                <a href="salon_comunal.php" class="btn">Reserva de salones comunes</a>
                 <a href="pagina6.html" class="btn">Botón 6</a>
                 <a href="pagina7.html" class="btn">Botón 7</a>
                 <a href="pagina8.html" class="btn">Botón 8</a>
