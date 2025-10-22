@@ -46,7 +46,7 @@ body, html {
   display: flex;
   gap: 40px;
   flex: 1;
-  max-height: 90%;
+  max-height: 75%;
 }
 
 .panel-column {
@@ -135,11 +135,6 @@ body, html {
     flex-direction: column;
   }
 }
-
-/* Flash */
-.flash { padding:10px; border-radius:6px; margin-bottom:12px; }
-.flash.success { background:#e6f7ea; color:#0b6b2d; border:1px solid #98e0b2; }
-.flash.error { background:#fdecea; color:#8a1f1f; border:1px solid #f2b8b8; }
 
 .small { font-size:0.9rem; color:#666; }
 .postulacion { background:#fcfdff; padding:10px; border-radius:6px; border:1px solid #eef3ff; }

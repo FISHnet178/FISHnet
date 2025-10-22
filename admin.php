@@ -145,22 +145,18 @@ $flash = get_flash();
     <title>Panel de Aprobaciones</title>
     <link rel="stylesheet" href="estilos/estilo.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-      .flash { padding:10px; border-radius:6px; margin-bottom:12px; }
-      .flash.success { background:#e6f7ea; color:#0b6b2d; border:1px solid #98e0b2; }
-      .flash.error { background:#fdecea; color:#8a1f1f; border:1px solid #f2b8b8; }
-      .usuario-item { display:flex; flex-direction:column; gap:8px; }
-      .postulacion { background:#f9f9f9; padding:10px; border-radius:6px; }
-      .small { font-size:0.9rem; color:#666; }
-      .btn-danger { background-color:#dc3545; border:none; padding:8px 12px; color:#fff; border-radius:6px; cursor:pointer; }
-      .btn-secondary { background-color:#6c757d; border:none; padding:8px 12px; color:#fff; border-radius:6px; cursor:pointer; }
-    </style>
 </head>
 <body>
 <div class="contenedor">
     <div class="decoracion"></div>
 
     <div class="dashboard-content">
+        <h1 style="color:#004080; margin:0 0 16px 0;">Crear y editar</h1>
+        <div class="action-buttons" style="margin-bottom:24px; gap:12px;">
+            <a href="admin_salon.php"><button type="button" class="btn">Salones comunales</button></a>
+            <a href="admin_unidad.php"><button type="button" class="btn">Unidades habitacionales</button></a>
+            <a href="admin_terreno.php"><button type="button" class="btn">Terrenos</button></a>
+        </div>
         <h1 style="color:#004080; margin:0 0 16px 0;">Panel de Aprobaciones y Gestión</h1>
 
         <div class="panel-columns">
@@ -267,7 +263,7 @@ $flash = get_flash();
         </div>
 
         <div class="action-buttons" style="margin-top:24px; gap:12px;">
-            <a href="index.html"><button type="button" class="btn">Cerrar sesión</button></a>
+            <a href="logout.php"><button type="button" class="btn">Cerrar sesión</button></a>
             <a href="Inicio.php"><button type="button" class="btn btn-secondary">Ir a inicio</button></a>
         </div>
     </div>
