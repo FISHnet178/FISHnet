@@ -68,10 +68,17 @@ $return = isset($_GET['return']) ? basename($_GET['return']) : 'admin.php';
 
             <?php if ($post['comprobante_ingreso'] !== null): ?>
                 <h2>Comprobante de ingreso</h2>
-                <img
-                    src="data:image/jpeg;base64,<?= base64_encode($post['comprobante_ingreso']) ?>"
-                    alt="Comprobante de ingreso"
-                >
+
+                <?php
+                $isPdf = (substr($post['comprobante_ingreso'], 0, 4) === "%PDF");
+                $url = 'comprobante.php?posid=' . $posID;
+                ?>
+
+                <?php if ($isPdf): ?>
+                    <a href="<?= htmlspecialchars($url) ?>" target="_blank" rel="noopener">Click aquí para ver pdf</a>
+                <?php else: ?>
+                    <img src="<?= htmlspecialchars($url) ?>" alt="Comprobante de ingreso" style="max-width:100%;height:auto;">
+                <?php endif; ?>
             <?php endif; ?>
 
             <?php if (count($integrantes) > 0): ?>
