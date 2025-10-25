@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS Habitante (
     fecha_aprobacion DATETIME NULL, 
     UnidadID INT NULL, 
     foto_perfil LONGBLOB NULL,
+    admin TINYINT(1) DEFAULT 0,
     FOREIGN KEY (UnidadID) REFERENCES UnidadHabitacional(UnidadID) 
 );
 
