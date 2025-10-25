@@ -14,7 +14,6 @@ body {
 header {
   flex-shrink: 0;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   background-image: url(solidaridad.jpeg);
   background-size: cover;
@@ -23,19 +22,35 @@ header {
   padding: 20px 20px;
 }
 
+.info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+}
+
+.nombre {
   font-size: 1.5em;
   font-weight: bold;
 }
 
 .menu-btn {
+  margin-left: 80%;
   background: rgba(0, 64, 128, 0.85);
   border: none;
   color: #fff;
   font-size: 1.5em;
   cursor: pointer;
   border-radius: 50%;
-  height: 44px;
+  height: 60px;
+  width: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -103,7 +118,7 @@ main {
   box-sizing: border-box;
 }
 
-.recuadro {
+.recuadro1 {
   flex: 1 1 40%;
   min-width: 300px;
   max-width: 45%;
@@ -112,9 +127,27 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 28px;
+  font-size: 12px;
   text-align: justify;
   background-color: #f9f9f9;
+  box-sizing: border-box;
+}
+
+.recuadro2 {
+  flex: 1 1 50%;
+  min-width: 300px;
+  max-width: 45%;
+  height: 60%;
+  border: 2px dashed #004080;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  text-align: justify;
+  background-color: #f9f9f9;
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 footer {
@@ -123,4 +156,8 @@ footer {
   color: white;
   text-align: center;
   padding: 10px;
+}
+
+footer a {
+  color : #84a3f7;
 }

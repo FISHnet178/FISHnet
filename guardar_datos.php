@@ -64,7 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// GET: leer datos para mostrar en el formulario
 $stmt = $pdo->prepare('SELECT NombreH, ApellidoH, CI, foto_perfil FROM Habitante WHERE HabID = ?');
 $stmt->execute([$HabID]);
 $datos = $stmt->fetch(PDO::FETCH_ASSOC);

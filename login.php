@@ -34,8 +34,6 @@ if (!$user) {
     js_alert_and_redirect('Credenciales inválidas.', 'login.html');
 }
 
-$_SESSION['admin'] = ($user['HabID'] == 1);
-
 if ((int)$user['aprobado'] === 0) {
     js_alert_and_redirect('Tu cuenta aún no ha sido aprobada. Por favor, espera la aprobación.', 'index.html');
     exit;

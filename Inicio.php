@@ -1,13 +1,23 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
 
-if (empty($_SESSION['nombreH'])) {
+if (empty($_SESSION['nombreH']) || empty($_SESSION['HABID'])) {
     header('Location: login.html');
     exit;
 }
-$nombreH = $_SESSION['nombreH'];
 
-require_once __DIR__ . '/config.php'; 
+$nombreH = $_SESSION['nombreH'];
+$currentHabId = $_SESSION['HABID'];
+
+require_once __DIR__ . '/config.php';
+
+if (!isset($_SESSION['isAdmin'])) {
+    $stmt = $pdo->prepare("SELECT admin FROM Habitante WHERE HabID = ?");
+    $stmt->execute([$currentHabId]);
+    $_SESSION['isAdmin'] = (bool) $stmt->fetchColumn();
+}
+
+$isAdmin = $_SESSION['isAdmin'];
 
 $posts = [];
 $respuestasByPost = [];
@@ -65,16 +75,20 @@ try {
 </head>
 <body>
     <header>
-        <div class="logo">LOGO</div>
-
+        <div class="info">
+            <div class="logo"><img src="estilos/Logo.png"></div>
+            <div class="nombre">El Rincón del Mundo</div>
+        </div>  
         <div class="perfil">
-            <?php echo htmlspecialchars($nombreH, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>
+            <div class="nombre-user">
+                <?php echo htmlspecialchars($nombreH, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>
+            </div>
             <button class="menu-btn" onclick="toggleMenu()" aria-expanded="false" aria-controls="menu" style="border:none;background:transparent;padding:0;">
                 <img src="mostrar_foto.php" alt="Foto de perfil" style="width:60px; height:60px; object-fit:cover; border-radius:50%;">
             </button>
             <div class="menu" id="menu" style="display:none;">
                 <a href="guardar_datos.php">Cambiar datos</a><br>
-                <?php if (isset($_SESSION['admin']) && $_SESSION['admin']): ?>
+                <?php if ($isAdmin): ?>
                     <a href="admin.php">Panel de administración</a><br>
                 <?php endif; ?>
                 <a href="logout.php">Cerrar sesión</a>
@@ -84,6 +98,7 @@ try {
 
     <main>
         <section class="botones">
+            <h1>Accesos Rápidos</h1>
             <div class="grid-botones">
                 <a href="JornadaT.html" class="btn">Registrar horas de trabajo</a>
                 <a href="comprobantes.php" class="btn">Subir comprobantes de pago</a>
@@ -91,27 +106,17 @@ try {
                 <a href="foro.html" class="btn">Crear publicación</a>
                 <a href="salon_comunal.php" class="btn">Reserva de salones comunes</a>
                 <a href="pagina6.html" class="btn">Botón 6</a>
-                <a href="pagina7.html" class="btn">Botón 7</a>
-                <a href="pagina8.html" class="btn">Botón 8</a>
-                <a href="pagina9.html" class="btn">Botón 9</a>
             </div>
         </section>
 
         <section class="actividades">
-            <h2>Foro Cooperativa</h2>
+            <h1>Foro Cooperativa</h1>
             <div class="foro-list" aria-live="polite">
                 <?php if (!empty($error_loading_posts)): ?>
                     <div class="sin-posts">Error al cargar publicaciones.</div>
                 <?php elseif (empty($posts)): ?>
                     <div class="sin-posts">No hay publicaciones aún.</div>
                 <?php else: ?>
-                    <?php if (!empty($_SESSION['admin']) && $_SESSION['admin'] && !empty($foroId)): ?>
-                        <form method="post" action="delete_post.php" onsubmit="return confirm('¿Eliminar publicación?');">
-                            <input type="hidden" name="foro_id" value="<?php echo $foroId; ?>">
-                            <button type="submit">Eliminar</button>
-                        </form>
-                    <?php endif; ?>
-
                     <?php foreach ($posts as $row): ?>
                         <?php
                             $foroId = (int)($row['ForoID'] ?? 0);
@@ -129,7 +134,6 @@ try {
                             <div class="acciones" style="margin-top:8px;">
                                 <button type="button" class="btn-responder-inline" data-foro="<?php echo $foroId; ?>">Responder</button>
                                 <?php
-                                $isAdmin = !empty($_SESSION['admin']) && $_SESSION['admin'];
                                 $isAuthor = isset($_SESSION['HABID']) && (int)$_SESSION['HABID'] === (int)($row['HabId'] ?? 0);
                                 if ($isAdmin || $isAuthor):
                                 ?>
@@ -139,7 +143,6 @@ try {
                                 </form>
                                 <?php endif; ?>
                             </div>
-
 
                             <div class="reply-inline" id="reply-inline-<?php echo $foroId; ?>" style="display:none; margin-top:10px;">
                                 <form method="post" action="foro.php" onsubmit="return validateInlineReply(this);">
@@ -168,12 +171,13 @@ try {
                             <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
-
                 <?php endif; ?>
             </div>
         </section>
     </main>
-
+  <footer>
+    <p>Contáctanos: ElRincóndelMundo@contacto.com | +598-xxx-xxxx | ¿Quieres saber que hacemos con tu información? <a href="info.html">click aquí</a></p>
+  </footer>
     <script>
         function toggleMenu() {
             const menu = document.getElementById('menu');
