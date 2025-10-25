@@ -1,8 +1,13 @@
 <?php
-require 'config.php';
 session_start();
 
-if (empty($_SESSION['admin'])) {
+require_once __DIR__ . '/config.php';
+
+$currentHabId = $_SESSION['HABID'] ?? 0;
+$stmt = $pdo->prepare("SELECT admin FROM Habitante WHERE HABID = ?");
+$stmt->execute([$currentHabId]);
+$isAdmin = (bool) $stmt->fetchColumn();
+if (!$isAdmin) {
     header('Location: login.php');
     exit;
 }

@@ -1,14 +1,17 @@
 <?php
-// admin_unidad.php
-require 'config.php'; // debe exponer $pdo (PDO con ERRMODE_EXCEPTION, EMULATE_PREPARES = false)
 session_start();
 
-if (empty($_SESSION['admin'])) {
+require_once __DIR__ . '/config.php';
+
+$currentHabId = $_SESSION['HABID'] ?? 0;
+$stmt = $pdo->prepare("SELECT admin FROM Habitante WHERE HABID = ?");
+$stmt->execute([$currentHabId]);
+$isAdmin = (bool) $stmt->fetchColumn();
+if (!$isAdmin) {
     header('Location: login.php');
     exit;
 }
 
-// CSRF simple
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(24));
 }
@@ -17,7 +20,6 @@ $csrf = $_SESSION['csrf_token'];
 $errors = [];
 $success = false;
 
-// Manejo POST (save / delete)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if (!isset($_POST['csrf_token']) || !hash_equals($csrf, $_POST['csrf_token'])) {
         http_response_code(400);
@@ -26,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
     $action = $_POST['action'];
 
-    // Eliminación
     if ($action === 'delete' && isset($_POST['delete_unidadid'])) {
         $delId = (int) $_POST['delete_unidadid'];
         try {
@@ -55,14 +56,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
     }
 
-    // Guardar (crear o actualizar) -- TerrID no UNIQUE: permite varias unidades por Terreno
     if ($action === 'save') {
         $unidadid = isset($_POST['unidadid']) && $_POST['unidadid'] !== '' ? (int) $_POST['unidadid'] : null;
         $terrid = isset($_POST['terrid']) ? (int) $_POST['terrid'] : 0;
         $estado = trim($_POST['estado'] ?? 'disponible');
         $piso = isset($_POST['piso']) ? (int) $_POST['piso'] : 0;
 
-        // Validaciones
         if ($terrid <= 0) $errors[] = "Terreno inválido.";
         if ($piso < 0) $errors[] = "Piso inválido.";
         if ($estado === '') $errors[] = "Estado es obligatorio.";
@@ -70,7 +69,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         if (empty($errors)) {
             try {
                 if ($unidadid === null) {
-                    // Insertar nueva unidad (no usamos NumeroU)
                     $stmtIns = $pdo->prepare("
                         INSERT INTO UnidadHabitacional (TerrID, Estado, Piso)
                         VALUES (:terrid, :estado, :piso)
@@ -83,7 +81,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     $success = true;
                     $unidadid = (int)$pdo->lastInsertId();
                 } else {
-                    // Actualizar existente
                     $stmtUpd = $pdo->prepare("
                         UPDATE UnidadHabitacional
                         SET TerrID = :terrid, Estado = :estado, Piso = :piso
@@ -98,7 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     $success = true;
                 }
             } catch (PDOException $e) {
-                // captura violaciones de integridad (FK, unique, etc.)
                 if ($e->getCode() === '23000') {
                     $errors[] = 'Violación de integridad. Revisa datos y relaciones (FK, UNIQUE, etc.).';
                 } else {
@@ -113,7 +109,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-// Cargar lista de unidades
 $listaUnidades = [];
 try {
     $stmtAll = $pdo->query("
@@ -128,16 +123,13 @@ try {
     $errors[] = 'No se pudo cargar la lista de unidades.';
 }
 
-// Obtener terrenos para el select
 $terrenos = [];
 try {
     $stmtT = $pdo->query("SELECT TerrID, NombreT FROM Terreno ORDER BY TerrID");
     $terrenos = $stmtT->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
-    // ignorar
 }
 
-// Cargar datos para edición si viene unidadid en GET
 $editUnidad = null;
 if (isset($_GET['unidadid'])) {
     $uid = (int) $_GET['unidadid'];
