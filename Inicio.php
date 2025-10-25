@@ -7,7 +7,7 @@ if (empty($_SESSION['nombreH'])) {
 }
 $nombreH = $_SESSION['nombreH'];
 
-require_once __DIR__ . '/config.php'; // define $pdo
+require_once __DIR__ . '/config.php'; 
 
 $posts = [];
 $respuestasByPost = [];

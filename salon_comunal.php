@@ -54,7 +54,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$salones = $pdo->query("SELECT SalonID, TerrID, Estado FROM SalonComunal ORDER BY SalonID")->fetchAll(PDO::FETCH_ASSOC);
+$salones = $pdo->query("
+    SELECT s.SalonID, s.TerrID, s.Estado, t.NombreT AS TerrenoNombre
+    FROM SalonComunal s
+    LEFT JOIN Terreno t ON s.TerrID = t.TerrID
+    ORDER BY s.SalonID
+")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -100,9 +105,10 @@ body, html {margin:0; padding:0; height:100%; font-family: Arial, sans-serif;}
           <option value="">-- Seleccionar --</option>
           <?php foreach($salones as $s): ?>
             <option value="<?= $s['SalonID'] ?>" data-estado="<?= htmlspecialchars($s['Estado']) ?>">
-              Sala #<?= $s['SalonID'] ?> — Terreno <?= $s['TerrID'] ?>
-              <?php if(strtolower($s['Estado'])!=='disponible'){ echo " — ".htmlspecialchars($s['Estado']); } ?>
+                Sala #<?= $s['SalonID'] ?> — <?= htmlspecialchars($s['TerrenoNombre'] ?? 'Terreno') ?>
+                <?php if(strtolower($s['Estado'])!=='disponible'){ echo " — ".htmlspecialchars($s['Estado']); } ?>
             </option>
+
           <?php endforeach; ?>
         </select>
       </label>
