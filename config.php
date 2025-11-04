@@ -2,8 +2,8 @@
 $host     = 'localhost';
 $port     = 3306;
 $dbname   = 'Cooperativa';
-$user     = 'Nahuel';
-$password = 'River178334$';
+$user     = 'Pilar';
+$password = 'Pilar2007';
 $dsn      = "mysql:host={$host};port={$port};dbname={$dbname};charset=utf8mb4;sslmode=DISABLED";
 
 $options = [

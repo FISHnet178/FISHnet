@@ -137,7 +137,7 @@ try {
                                 $isAuthor = isset($_SESSION['HABID']) && (int)$_SESSION['HABID'] === (int)($row['HabId'] ?? 0);
                                 if ($isAdmin || $isAuthor):
                                 ?>
-                                <form method="post" action="delete_post.php" style="display:inline-block;margin-left:10px;" onsubmit="return confirm('¿Eliminar publicación?');">
+                                <form method="post" action="eliminar_post.php" style="display:inline-block;margin-left:10px;" onsubmit="return confirm('¿Eliminar publicación?');">
                                     <input type="hidden" name="foro_id" value="<?php echo $foroId; ?>">
                                     <button type="submit" style="background:#d9534f;color:#fff;border:none;padding:6px 10px;border-radius:4px;cursor:pointer;">Eliminar</button>
                                 </form>

@@ -45,12 +45,13 @@ try {
             $stmt->execute([$existingHabId]);
         }
 
-        $stmt = $pdo->prepare('SELECT PosID FROM Postula WHERE HABID = ? LIMIT 1');
+        // Verificar si ya tiene una postulación
+        $stmt = $pdo->prepare('SELECT PosID FROM Postulaciones WHERE HabID = ? LIMIT 1');
         $stmt->execute([$existingHabId]);
-        $postula = $stmt->fetch(PDO::FETCH_ASSOC);
+        $postulacion = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if (!$postula) {
-            $stmt = $pdo->prepare('INSERT INTO Postula (HABID, PosID) VALUES (?, NULL)');
+        if (!$postulacion) {
+            $stmt = $pdo->prepare('INSERT INTO Postulaciones (HabID) VALUES (?)');
             $stmt->execute([$existingHabId]);
         }
 
@@ -81,7 +82,8 @@ try {
 
         $habid = (int)$pdo->lastInsertId();
 
-        $stmt = $pdo->prepare('INSERT INTO Postula (HABID, PosID) VALUES (?, NULL)');
+        // Crear postulación vacía
+        $stmt = $pdo->prepare('INSERT INTO Postulaciones (HabID) VALUES (?)');
         $stmt->execute([$habid]);
 
         $pdo->commit();
@@ -102,7 +104,7 @@ try {
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
-    js_alert('Error al procesar el login. Intenta de nuevo.');
+    js_alert('Error: ' . $e->getMessage()); // Solo para depuración
     exit;
 }
 ?>
