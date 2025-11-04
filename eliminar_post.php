@@ -23,16 +23,20 @@ try {
     $row = $check->fetch();
 
     if (!$row) {
-        set_flash('Publicación no encontrada.', 'error');
-        header('Location: inicio.php');
+        echo "<script>
+            alert('Publicación no encontrada.');
+            window.location.href = 'inicio.php';
+        </script>";
         exit;
     }
 
     $stmt = $pdo->prepare('DELETE FROM Foro WHERE ForoID = :id OR ParentID = :id');
     $stmt->execute([':id' => $foroId]);
 
-    set_flash('Publicación eliminada correctamente.', 'success');
-    header('Location: inicio.php');
+    echo "<script>
+        alert('Publicación eliminada correctamente.');
+        window.location.href = 'inicio.php';
+    </script>";
     exit;
 
 } catch (PDOException $e) {
@@ -41,3 +45,4 @@ try {
     header('Location: inicio.php');
     exit;
 }
+?>
