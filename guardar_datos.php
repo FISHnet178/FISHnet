@@ -3,7 +3,7 @@ require 'config.php';
 session_start();
 
 if (empty($_SESSION['HABID'])) {
-    header('Location: login.html');
+    header('Location: login.php');
     exit;
 }
 

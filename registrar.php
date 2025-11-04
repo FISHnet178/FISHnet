@@ -2,107 +2,93 @@
 require 'config.php';
 session_start();
 
-$Usuario    = trim($_POST['Usuario']    ?? '');
-$Contrasena = trim($_POST['Contraseña'] ?? '');
-
-function js_alert(string $message) {
-    $msg = json_encode($message, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
-    echo "<script>alert($msg);</script>";
+function set_flash($msg, $type = 'info') {
+    $_SESSION['flash'] = ['msg' => $msg, 'type' => $type];
+}
+function get_flash() {
+    if (!empty($_SESSION['flash'])) {
+        $f = $_SESSION['flash'];
+        unset($_SESSION['flash']);
+        return "<div class='flash {$f['type']}'>{$f['msg']}</div>";
+    }
+    return '';
 }
 
-function js_alert_and_redirect(string $message, string $location) {
-    $msg = json_encode($message, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
-    $loc = json_encode($location, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
-    echo "<script>alert($msg); window.location.href = $loc;</script>";
-    exit;
-}
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $usuario = trim($_POST['Usuario'] ?? '');
+    $contrasena = trim($_POST['Contraseña'] ?? '');
 
-if ($Usuario === '' || $Contrasena === '') {
-    js_alert('Completa usuario y contraseña.');
-    exit;
-}
-
-$stmt = $pdo->prepare('SELECT HABID, Usuario, Contrasena, aprobado, admin FROM Habitante WHERE Usuario = ? LIMIT 1');
-$stmt->execute([$Usuario]);
-$habitante = $stmt->fetch(PDO::FETCH_ASSOC);
-
-try {
-    if ($habitante) {
-        $existingHabId = (int)$habitante['HABID'];
-        $existingAprobado = (int)$habitante['aprobado'];
-        $esAdmin = (int)$habitante['admin'] === 1;
-        $hashStored = $habitante['Contrasena'];
-
-        if (!password_verify($Contrasena, $hashStored)) {
-            js_alert('Contraseña incorrecta.');
-            exit;
-        }
-
-        $pdo->beginTransaction();
-
-        if ($existingAprobado !== 1) {
-            $stmt = $pdo->prepare('UPDATE Habitante SET aprobado = 1 WHERE HABID = ?');
-            $stmt->execute([$existingHabId]);
-        }
-
-        $stmt = $pdo->prepare('SELECT PosID FROM Postula WHERE HABID = ? LIMIT 1');
-        $stmt->execute([$existingHabId]);
-        $postula = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$postula) {
-            $stmt = $pdo->prepare('INSERT INTO Postula (HABID, PosID) VALUES (?, NULL)');
-            $stmt->execute([$existingHabId]);
-        }
-
-        $pdo->commit();
-
-        $_SESSION['admin'] = $esAdmin;
-        $_SESSION['habid'] = $existingHabId;
-        $_SESSION['usuario'] = $habitante['Usuario'];
-
-        if ($esAdmin) {
-            js_alert_and_redirect('Bienvenido administrador.', 'admin_dashboard.php');
-        } else {
-            js_alert_and_redirect('Inicio de sesión correcto.', 'index.html');
-        }
-
+    if ($usuario === '' || $contrasena === '') {
+        set_flash("Por favor complete todos los campos.", "error");
+        header("Location: registrar.php");
         exit;
+    }
 
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM Habitante WHERE Usuario = ?");
+    $stmt->execute([$usuario]);
+    if ($stmt->fetchColumn() > 0) {
+        set_flash("El nombre de usuario ya está registrado. Intente con otro.", "error");
+        header("Location: registrar.php");
+        exit;
+    }
+
+    $hash = password_hash($contrasena, PASSWORD_DEFAULT);
+
+    $stmt = $pdo->query("SELECT COUNT(*) FROM Habitante WHERE admin = 1");
+    $tieneAdmin = $stmt->fetchColumn() > 0;
+
+    $esAdmin = $tieneAdmin ? 0 : 1;
+    $aprobado = $esAdmin ? 1 : 0;
+
+    $stmt = $pdo->prepare("
+        INSERT INTO Habitante (Usuario, Contrasena, admin, aprobado)
+        VALUES (?, ?, ?, ?)
+    ");
+    $stmt->execute([$usuario, $hash, $esAdmin, $aprobado]);
+
+    $habID = $pdo->lastInsertId();
+    $_SESSION['HABID'] = $habID;
+    $_SESSION['Usuario'] = $usuario;
+    $_SESSION['admin'] = $esAdmin;
+
+    set_flash("Completa la postulación y espera a ser aprobado", "success");
+
+    if ($esAdmin) {
+        header("Location: Inicio.php");
     } else {
-        $pdo->beginTransaction();
-
-        $hash = password_hash($Contrasena, PASSWORD_DEFAULT);
-
-        $hayAdmins = $pdo->query('SELECT COUNT(*) FROM Habitante WHERE admin = 1')->fetchColumn();
-        $esPrimerAdmin = $hayAdmins == 0 ? 1 : 0;
-
-        $stmt = $pdo->prepare('INSERT INTO Habitante (Usuario, Contrasena, aprobado, admin) VALUES (?, ?, 1, ?)');
-        $stmt->execute([$Usuario, $hash, $esPrimerAdmin]);
-
-        $habid = (int)$pdo->lastInsertId();
-
-        $stmt = $pdo->prepare('INSERT INTO Postula (HABID, PosID) VALUES (?, NULL)');
-        $stmt->execute([$habid]);
-
-        $pdo->commit();
-
-        $_SESSION['admin'] = $esPrimerAdmin === 1;
-        $_SESSION['habid'] = $habid;
-        $_SESSION['usuario'] = $Usuario;
-
-        if ($esPrimerAdmin) {
-            js_alert_and_redirect('Administrador creado correctamente.', 'inicio.php');
-        } else {
-            js_alert_and_redirect('Registro completado y aprobado. No necesitas hacer la postulación.', 'index.html');
-        }
-
-        exit;
+        header("Location: postulacion.php");
     }
-} catch (Exception $e) {
-    if ($pdo->inTransaction()) {
-        $pdo->rollBack();
-    }
-    js_alert('Error al procesar el login. Intenta de nuevo.');
     exit;
 }
 ?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro</title>
+    <link rel="stylesheet" href="estilos/registro.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div class="contenedor">
+        <div class="registro-form">
+            <h2>Registro</h2>
+
+            <?= get_flash() ?>
+
+            <form action="registrar.php" method="POST">
+                <label>
+                    Usuario:
+                    <input type="text" name="Usuario" required>
+                </label>
+                <label>
+                    Contraseña:
+                    <input type="password" name="Contraseña" required>
+                </label>
+                <button type="submit">Registrarse</button>
+            </form>
+
+            <p>
+                <a class="volver-btn" href="index.html">← Volver al inicio</a>
+            </p>
+        </div>

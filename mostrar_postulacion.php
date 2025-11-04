@@ -71,7 +71,7 @@ $return = isset($_GET['return']) ? basename($_GET['return']) : 'admin.php';
 
                 <?php
                 $isPdf = (substr($post['comprobante_ingreso'], 0, 4) === "%PDF");
-                $url = 'comprobante.php?posid=' . $posID;
+                $url = 'comprobantepdf.php?posid=' . $posID;
                 ?>
 
                 <?php if ($isPdf): ?>

@@ -1,8 +1,8 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
 
-if (empty($_SESSION['nombreH']) || empty($_SESSION['HABID'])) {
-    header('Location: login.html');
+if (!isset($_SESSION['HABID'])) {
+    header('Location: login.php');
     exit;
 }
 
@@ -10,6 +10,7 @@ $nombreH = $_SESSION['nombreH'];
 $currentHabId = $_SESSION['HABID'];
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/flash_set.php';
 
 if (!isset($_SESSION['isAdmin'])) {
     $stmt = $pdo->prepare("SELECT admin FROM Habitante WHERE HabID = ?");
@@ -100,10 +101,10 @@ try {
         <section class="botones">
             <h1>Accesos Rápidos</h1>
             <div class="grid-botones">
-                <a href="JornadaT.html" class="btn">Registrar horas de trabajo</a>
+                <a href="JornadaT.php" class="btn">Registrar horas de trabajo</a>
                 <a href="comprobantes.php" class="btn">Subir comprobantes de pago</a>
                 <a href="historial.php" class="btn">Historial de acciones</a>
-                <a href="foro.html" class="btn">Crear publicación</a>
+                <a href="foro.php" class="btn">Crear publicación</a>
                 <a href="salon_comunal.php" class="btn">Reserva de salones comunes</a>
                 <a href="pagina6.html" class="btn">Botón 6</a>
             </div>
@@ -137,7 +138,7 @@ try {
                                 $isAuthor = isset($_SESSION['HABID']) && (int)$_SESSION['HABID'] === (int)($row['HabId'] ?? 0);
                                 if ($isAdmin || $isAuthor):
                                 ?>
-                                <form method="post" action="delete_post.php" style="display:inline-block;margin-left:10px;" onsubmit="return confirm('¿Eliminar publicación?');">
+                                <form method="post" action="eliminar_post.php" style="display:inline-block;margin-left:10px;" onsubmit="return confirm('¿Eliminar publicación?');">
                                     <input type="hidden" name="foro_id" value="<?php echo $foroId; ?>">
                                     <button type="submit" style="background:#d9534f;color:#fff;border:none;padding:6px 10px;border-radius:4px;cursor:pointer;">Eliminar</button>
                                 </form>

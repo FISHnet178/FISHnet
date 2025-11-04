@@ -3,8 +3,7 @@ session_start();
 require_once 'config.php';
 
 if (!isset($_SESSION['HABID'])) {
-    echo "No has iniciado sesión.";
-    echo "<a href='login.html'>Iniciar sesión</a>";
+    header('Location: login.php');
     exit;
 }
 

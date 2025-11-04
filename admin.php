@@ -2,11 +2,13 @@
 session_start();
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/flash_set.php';
 
 $currentHabId = $_SESSION['HABID'] ?? 0;
 $stmt = $pdo->prepare("SELECT admin FROM Habitante WHERE HABID = ?");
 $stmt->execute([$currentHabId]);
 $isAdmin = (bool) $stmt->fetchColumn();
+
 if (!$isAdmin) {
     header('Location: login.php');
     exit;
@@ -14,11 +16,9 @@ if (!$isAdmin) {
 
 $unidades = $pdo->query("SELECT UnidadID, TerrID, Piso FROM UnidadHabitacional ORDER BY UnidadID ASC")->fetchAll();
 
-if (!isset($_SESSION['flash'])) $_SESSION['flash'] = null;
-function set_flash($msg, $type = 'info') { }
-function get_flash() { }
-
-if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_bytes(16));
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(16));
+}
 $csrf = $_SESSION['csrf_token'];
 
 
@@ -104,7 +104,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['toggle_admin_id'])) {
             $habId = (int) $_POST['toggle_admin_id'];
 
-            // Obtenemos el estado actual del usuario
             $stmt = $pdo->prepare("SELECT admin FROM Habitante WHERE HabID = ?");
             $stmt->execute([$habId]);
             $current = $stmt->fetchColumn();
@@ -112,16 +111,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($current === false) {
                 set_flash('Usuario no encontrado.', 'error');
             } else {
-                $newStatus = $current ? 0 : 1; // Cambia admin
+                $newStatus = $current ? 0 : 1; 
 
-                // Si es el mismo admin que se está quitando permisos
                 $isSelf = isset($_SESSION['HABID']) && ((int)$_SESSION['HABID'] === $habId);
                 if ($isSelf && $newStatus === 0) {
-                    // Verificar confirmación explícita
                     if (empty($_POST['confirm_self_remove']) || $_POST['confirm_self_remove'] !== '1') {
                         set_flash('Advertencia: para quitarte el rol de administrador necesitás confirmarlo explícitamente.', 'error');
                     } else {
-                        // Se quita el permiso y se hace logout
                         $stmt = $pdo->prepare("UPDATE Habitante SET admin = 0 WHERE HabID = ?");
                         $stmt->execute([$habId]);
                         set_flash('Te quitaste los permisos de administrador. Cerrando sesión...', 'success');
@@ -130,7 +126,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         exit;
                     }
                 } else {
-                    // Cambio normal de admin en otro usuario
                     $stmt = $pdo->prepare("UPDATE Habitante SET admin = ? WHERE HabID = ?");
                     $stmt->execute([$newStatus, $habId]);
                     set_flash(
@@ -166,7 +161,6 @@ $pendientesComprobantes = $pdo
     ->query("SELECT PagoID FROM PagoCuota WHERE AprobadoP IS NULL ORDER BY PagoID ASC")
     ->fetchAll();
 
-$flash = get_flash();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -177,6 +171,7 @@ $flash = get_flash();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
+<?php require_once __DIR__ . '/flash_set.php'; ?>
 <div class="contenedor">
     <div class="decoracion"></div>
 
@@ -245,31 +240,42 @@ $flash = get_flash();
                                         </form>
                                     <?php endif; ?>
 
-                                    <form method="post" class="toggle-admin-form" data-habid="<?php echo (int)$u['HabID']; ?>" data-is-self="<?php echo ((int)$u['HabID'] === $currentHabId) ? '1' : '0'; ?>" style="display:inline-block; margin:0;">
-                                        <input type="hidden" name="csrf_token" value="<?php echo $csrf; ?>">
-                                        <input type="hidden" name="toggle_admin_id" value="<?php echo (int)$u['HabID']; ?>">
-                                        <button type="submit" class="btn-secondary"><?php echo $u['admin'] ? 'Quitar admin' : 'Hacer admin'; ?></button>
-                                    </form>
+                                    <?php if ($u['aprobado']): ?>
+                                        <form method="post" class="toggle-admin-form" 
+                                            data-habid="<?php echo (int)$u['HabID']; ?>" 
+                                            data-is-self="<?php echo ((int)$u['HabID'] === $currentHabId) ? '1' : '0'; ?>" 
+                                            style="display:inline-block; margin:0;">
+                                            <input type="hidden" name="csrf_token" value="<?php echo $csrf; ?>">
+                                            <input type="hidden" name="toggle_admin_id" value="<?php echo (int)$u['HabID']; ?>">
+                                            <button type="submit" class="btn-secondary">
+                                                <?php echo $u['admin'] ? 'Quitar admin' : 'Hacer admin'; ?>
+                                            </button>
+                                        </form>
 
-                                    <form method="post" style="display:flex; flex-direction:column; gap:4px; margin:0;">
-                                        <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-                                        <input type="hidden" name="user_id_for_unidad" value="<?= (int)$u['HabID'] ?>">
-                                        <button type="submit">Asignar Unidad</button>
-                                        <select name="unidad_id" required class="unidad-select">
-                                            <option value="">Seleccionar unidad</option>
-                                            <?php foreach ($unidades as $unidad): ?>
-                                                <option value="<?= (int)$unidad['UnidadID'] ?>"><?= (int)$unidad['UnidadID'] ?> — TerrID <?= (int)$unidad['TerrID'] ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </form>
+                                        <form method="post" style="display:flex; flex-direction:column; gap:4px; margin:0;">
+                                            <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+                                            <input type="hidden" name="user_id_for_unidad" value="<?= (int)$u['HabID'] ?>">
+                                            <button type="submit">Asignar Unidad</button>
+                                            <select name="unidad_id" required class="unidad-select">
+                                                <option value="">Seleccionar unidad</option>
+                                                <?php foreach ($unidades as $unidad): ?>
+                                                    <option value="<?= (int)$unidad['UnidadID'] ?>">
+                                                        <?= (int)$unidad['UnidadID'] ?> — TerrID <?= (int)$unidad['TerrID'] ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </form>
+                                    <?php endif; ?>
 
-
-                                    <form method="post" onsubmit="return confirm('¿Eliminar al usuario <?php echo addslashes(htmlspecialchars($u['Usuario'])); ?> y sus datos asociados?');" style="display:inline-block; margin:0;">
+                                    <form method="post"
+                                        onsubmit="return confirm('¿Eliminar al usuario <?php echo addslashes(htmlspecialchars($u['Usuario'])); ?> y sus datos asociados?');"
+                                        style="display:inline-block; margin:0;">
                                         <input type="hidden" name="csrf_token" value="<?php echo $csrf; ?>">
                                         <input type="hidden" name="delete_user_id" value="<?php echo (int)$u['HabID']; ?>">
                                         <button type="submit" class="btn-danger">Eliminar usuario</button>
                                     </form>
                                 </div>
+
                             </div>
                         </li>
                     <?php endforeach; ?>
@@ -340,8 +346,6 @@ $flash = get_flash();
                     e.preventDefault();
                     return;
                 }
-
-                // Añadimos el campo de confirmación al POST
                 const input = document.createElement('input');
                 input.type = 'hidden';
                 input.name = 'confirm_self_remove';
