@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     set_flash("Completa la postulación y espera a ser aprobado", "success");
 
     if ($esAdmin) {
-        header("Location: Inicio.php");
+        header("Location: guardar_datos.php");
     } else {
         header("Location: postulacion.php");
     }
