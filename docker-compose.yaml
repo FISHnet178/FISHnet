@@ -3,45 +3,39 @@ version: '3.9'
 services:
   app:
     build: ./app
-    container_name: mi_app_web
+    container_name: web_app
     ports:
       - "8080:80"
-    volumes:
-      - ./app:/var/www/html
-    environment:
-      - DB_HOST=db
-      - DB_USER=${DB_USER}
-      - DB_PASS=${DB_PASS}
     depends_on:
       - db
+    networks:
+      - appnet
 
   db:
     image: mysql:8.0
-    container_name: mi_app_db
+    container_name: mysql_db
     restart: always
+    env_file: .env
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASS}
-      MYSQL_DATABASE: miapp
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASS}
+      MYSQL_ROOT_HOST: "%"
     volumes:
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db:/docker-entrypoint-initdb.d
       - db_data:/var/lib/mysql
+    networks:
+      - appnet
 
-  backups:
-    image: alpine
-    container_name: mi_app_backups
+  backup:
+    build: ./backup
+    container_name: backup_service
     volumes:
       - ./backups:/backups
-      - db_data:/var/lib/mysql:ro
-    entrypoint: ["/bin/sh", "-c"]
-    command: >
-      "while true; do
-         mysqldump -h db -u${DB_USER} -p${DB_PASS} miapp > /backups/backup_$(date +%F_%T).sql;
-         sleep 86400;
-       done"
     depends_on:
       - db
+    networks:
+      - appnet
 
 volumes:
   db_data:
+
+networks:
+  appnet:
