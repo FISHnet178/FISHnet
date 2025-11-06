@@ -1,3 +1,4 @@
+/* ===== RESET ===== */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -5,16 +6,73 @@
   font-family: sans-serif;
 }
 
-html { 
-  height: 100%; 
-}
-
-body {
+/* ===== ESTRUCTURA GENERAL ===== */
+html, body {
   height: 100%;
+  display: flex;
+  flex-direction: column;
   background-color: #f0f0f0;
   color: #333;
 }
 
+/* ===== HEADER ===== */
+header {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-image: url(solidaridad.jpeg);
+  background-size: cover;
+  background-position: center;
+  color: white;
+  padding: 20px;
+}
+
+.info {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+}
+
+.nombre {
+  margin-left: 10px;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.perfil {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-weight: bold;
+  color: #004080;
+}
+
+.foto-user {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+}
+
+.nombre-user {
+  margin-right: 10px;
+  font-weight: bold;
+  color: white;
+}
+
+/* ===== BOTÓN MENÚ ===== */
 .menu-btn {
   background: rgba(0, 64, 128, 0.85);
   border: none;
@@ -37,6 +95,7 @@ body {
   outline: none;
 }
 
+/* ===== MENÚ DESPLEGABLE ===== */
 .menu {
   position: absolute;
   top: 80px;
@@ -80,76 +139,15 @@ body {
   outline: none;
 }
 
-.perfil {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-weight: bold;
-  color: #004080;
-}
-
-header {
-  flex-shrink: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-image: url(solidaridad.jpeg);
-  background-size: cover;
-  background-position: center;
-  color: white;
-  padding: 20px 20px;
-}
-
-.info {
-  display: flex;
-  align-items: center;
-}
-
-.logo {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  overflow: hidden;
-  display: flex;
-}
-
-.nombre {
-  margin-left: 10px;
-  font-size: 1.5em;
-  font-weight: bold;
-}
-
-.perfil {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.foto-user {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background-color: #999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-}
-
-.nombre-user {
-  margin-right: 10px;
-  font-weight: bold;
-  color: white;
-}
-
+/* ===== MAIN ===== */
 main {
-  flex: 1;
+  flex: 1; /* ocupa todo el espacio disponible */
   display: flex;
   padding: 2rem;
   gap: 2rem;
 }
 
+/* ===== CONTENEDOR DE BOTONES ===== */
 .botones {
   border: 3px solid #aaa;
   border-radius: 12px;
@@ -160,14 +158,15 @@ main {
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
   text-align: center;
 }
+
 .botones h1 {
   margin-top: 2rem;
   margin-bottom: 5rem;
   color: #004080;
 }
 
+/* ===== GRID DE BOTONES ===== */
 .grid-botones {
-  
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 7rem;
@@ -178,9 +177,8 @@ main {
   background-color: #ddd;
   border: 2px solid #bbb;
   border-radius: 10px;
-  padding: 2rem 2rem;
+  padding: 2rem;
   text-align: center;
-  text-decoration: none;
   font-weight: bold;
   color: #333;
   transition: background-color 0.3s;
@@ -195,6 +193,7 @@ main {
   background-color: #ccc;
 }
 
+/* ===== ACTIVIDADES ===== */
 .actividades {
   flex: 1;
   display: flex;
@@ -216,7 +215,7 @@ main {
   padding-right: 8px;
 }
 
-
+/* ===== POSTS ===== */
 .post { 
   border:1px solid #ddd;
   padding:10px;
@@ -240,23 +239,6 @@ main {
   color:#666; 
 }
 
-.perfil { 
-  display:flex; 
-  align-items:center; 
-  gap:10px; 
-  position:relative;
-}
-
-.menu { 
-  display:none; 
-  position:absolute; 
-  right:16px; 
-  background:#fff; 
-  border:1px solid #ddd; 
-  border-radius:6px; 
-  padding:8px; 
-}
-
 .btn-eliminar {
   background:#dc3545;
   color:#fff;
@@ -266,30 +248,38 @@ main {
   cursor:pointer;
 }
 
-html, body {
-  height: 100%;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
+.acciones .btn-responder, 
+.acciones .btn-responder-inline { 
+  background:transparent; 
+  border:1px solid #0073e6; 
+  color:#0073e6; 
+  padding:6px 8px; 
+  border-radius:4px; 
+  cursor:pointer; 
+  text-decoration:none; 
 }
 
-.main-content {
-  flex: 1;
+.respuestas .respuesta { 
+  margin-top:8px; 
 }
 
+.reply-inline textarea { 
+  box-sizing:border-box; 
+}
+
+/* ===== FOOTER ===== */
 footer {
-  flex-shrink: 0;
+  position: fixed;   /* lo fija en la pantalla */
+  bottom: 0;         /* lo coloca en la parte inferior */
+  left: 0;           /* alineado al borde izquierdo */
+  width: 100%;       /* ocupa todo el ancho */
   background-color: #004080;
   color: white;
   text-align: center;
   padding: 10px;
+  z-index: 100;      /* asegura que quede por encima de otros elementos */
 }
+
 footer a {
   color: #84a3f7;
 }
-
-
-.post { margin-bottom:16px; padding:12px; border:1px solid #e6e6e6; border-radius:6px; background:#fff; }
-.acciones .btn-responder, .acciones .btn-responder-inline { background:transparent; border:1px solid #0073e6; color:#0073e6; padding:6px 8px; border-radius:4px; cursor:pointer; text-decoration:none; }
-.respuestas .respuesta { margin-top:8px; }
-.reply-inline textarea { box-sizing:border-box; }

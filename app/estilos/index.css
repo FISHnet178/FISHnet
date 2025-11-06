@@ -11,15 +11,17 @@ body {
   flex-direction: column;
 }
 
+/* ===== HEADER ===== */
 header {
   flex-shrink: 0;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   background-image: url(solidaridad.jpeg);
   background-size: cover;
   background-position: center;
   color: white;
-  padding: 20px 20px;
+  padding: 10px 20px;
 }
 
 .info {
@@ -41,8 +43,8 @@ header {
   font-weight: bold;
 }
 
+/* ===== MENU BUTTON ===== */
 .menu-btn {
-  margin-left: 80%;
   background: rgba(0, 64, 128, 0.85);
   border: none;
   color: #fff;
@@ -64,6 +66,7 @@ header {
   outline: none;
 }
 
+/* ===== MENU ===== */
 .menu {
   position: absolute;
   top: 80px;
@@ -107,6 +110,7 @@ header {
   outline: none;
 }
 
+/* ===== MAIN ===== */
 main {
   flex: 1;
   display: flex;
@@ -118,6 +122,7 @@ main {
   box-sizing: border-box;
 }
 
+/* ===== RECUADRO1 ===== */
 .recuadro1 {
   flex: 1 1 40%;
   min-width: 300px;
@@ -127,12 +132,19 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 12px;
-  text-align: justify;
   background-color: #f9f9f9;
   box-sizing: border-box;
+  padding: 16px;
 }
 
+.recuadro1 img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* se adapta sin deformarse */
+  border-radius: 8px;
+}
+
+/* ===== RECUADRO2 (centrado) ===== */
 .recuadro2 {
   flex: 1 1 50%;
   min-width: 300px;
@@ -141,15 +153,25 @@ main {
   border: 2px dashed #004080;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  justify-content: center; /* centra verticalmente */
+  align-items: center;     /* centra horizontalmente */
+  text-align: center;      /* centra el texto */
   font-size: 16px;
-  text-align: justify;
   background-color: #f9f9f9;
   padding: 16px;
   box-sizing: border-box;
 }
 
+.recuadro2 h1,
+.recuadro2 h2,
+.recuadro2 h3,
+.recuadro2 p {
+  margin: 10px 0;
+  line-height: 1.5;
+  width: 100%;
+}
+
+/* ===== FOOTER ===== */
 footer {
   flex-shrink: 0;
   background-color: #004080;
@@ -160,4 +182,77 @@ footer {
 
 footer a {
   color : #84a3f7;
+}
+
+/* ====== RESPONSIVE ====== */
+
+/* Pantallas medianas */
+@media (max-width: 900px) {
+  .logo {
+    width: 50px;
+    height: 50px;
+  }
+
+  .nombre {
+    font-size: 1.2em;
+  }
+
+  .menu-btn {
+    height: 50px;
+    width: 50px;
+    font-size: 1.2em;
+  }
+
+  main {
+    flex-direction: column;
+  }
+
+  .recuadro1, .recuadro2 {
+    max-width: 90%;
+    height: auto;
+  }
+}
+
+/* Pantallas pequeñas (celulares) */
+@media (max-width: 600px) {
+  header {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px;
+  }
+
+  .info {
+    gap: 0.5rem;
+  }
+
+  .logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .nombre {
+    font-size: 1em;
+  }
+
+  .menu-btn {
+    height: 45px;
+    width: 45px;
+    font-size: 1.1em;
+  }
+
+  .menu {
+    top: 65px;
+    right: 10px;
+  }
+
+  main {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .recuadro1, .recuadro2 {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+  }
 }
