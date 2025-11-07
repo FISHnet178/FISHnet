@@ -104,9 +104,9 @@ try {
                 <a href="JornadaT.php" class="btn">Registrar horas de trabajo</a>
                 <a href="comprobantes.php" class="btn">Subir comprobantes de pago</a>
                 <a href="historial.php" class="btn">Historial de acciones</a>
+                
                 <a href="foro.php" class="btn">Crear publicación</a>
                 <a href="salon_comunal.php" class="btn">Reserva de salones comunes</a>
-                <a href="pagina6.html" class="btn">Botón 6</a>
             </div>
         </section>
 

@@ -1,4 +1,3 @@
-/* ===== RESET ===== */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -6,7 +5,6 @@
   font-family: sans-serif;
 }
 
-/* ===== ESTRUCTURA GENERAL ===== */
 html, body {
   height: 100%;
   display: flex;
@@ -15,7 +13,6 @@ html, body {
   color: #333;
 }
 
-/* ===== HEADER ===== */
 header {
   flex-shrink: 0;
   display: flex;
@@ -72,7 +69,6 @@ header {
   color: white;
 }
 
-/* ===== BOTÓN MENÚ ===== */
 .menu-btn {
   background: rgba(0, 64, 128, 0.85);
   border: none;
@@ -95,7 +91,6 @@ header {
   outline: none;
 }
 
-/* ===== MENÚ DESPLEGABLE ===== */
 .menu {
   position: absolute;
   top: 80px;
@@ -139,15 +134,13 @@ header {
   outline: none;
 }
 
-/* ===== MAIN ===== */
 main {
-  flex: 1; /* ocupa todo el espacio disponible */
+  flex: 1;
   display: flex;
   padding: 2rem;
   gap: 2rem;
 }
 
-/* ===== CONTENEDOR DE BOTONES ===== */
 .botones {
   border: 3px solid #aaa;
   border-radius: 12px;
@@ -165,12 +158,13 @@ main {
   color: #004080;
 }
 
-/* ===== GRID DE BOTONES ===== */
 .grid-botones {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 7rem;
+  grid-template-columns: repeat(3, 1fr); /* tres columnas iguales */
   margin: 1rem;
+  gap:7rem;
+  justify-content: space-evenly; /* distribuye espacio igual entre botones y bordes */
+  align-items: center;
 }
 
 .btn {
@@ -187,13 +181,13 @@ main {
   justify-content: center;
   height: 150px;
   width: 150px;
+  text-decoration: none;
 }
 
 .btn:hover {
   background-color: #ccc;
 }
 
-/* ===== ACTIVIDADES ===== */
 .actividades {
   flex: 1;
   display: flex;
@@ -215,7 +209,6 @@ main {
   padding-right: 8px;
 }
 
-/* ===== POSTS ===== */
 .post { 
   border:1px solid #ddd;
   padding:10px;
@@ -267,17 +260,16 @@ main {
   box-sizing:border-box; 
 }
 
-/* ===== FOOTER ===== */
 footer {
-  position: fixed;   /* lo fija en la pantalla */
-  bottom: 0;         /* lo coloca en la parte inferior */
-  left: 0;           /* alineado al borde izquierdo */
-  width: 100%;       /* ocupa todo el ancho */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
   background-color: #004080;
   color: white;
   text-align: center;
   padding: 10px;
-  z-index: 100;      /* asegura que quede por encima de otros elementos */
+  z-index: 100;
 }
 
 footer a {
