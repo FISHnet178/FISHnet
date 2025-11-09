@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="text" name="usuario" placeholder="Usuario" required>
                 <input type="password" name="password" placeholder="Contraseña" required>
                 <button type="submit">ENVIAR</button>
-                <p>¿No tienes cuenta? <a href="registro.html">Regístrate</a></p>
+                <p>¿No tienes cuenta? <a href="registrar.php">Regístrate</a></p>
                 <p><a href="index.html">Volver al inicio</a></p>
             </form>
         </div>

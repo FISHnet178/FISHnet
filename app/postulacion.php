@@ -46,23 +46,34 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $comprobante = null;
     if (isset($_FILES["comprobante_ingreso"]) && $_FILES["comprobante_ingreso"]["error"] === UPLOAD_ERR_OK) {
         $comprobante = file_get_contents($_FILES["comprobante_ingreso"]["tmp_name"]);
+    } else {
+        set_flash("Error al subir el comprobante de ingreso.", "error");
+        header("Location: postulacion.php");
+        exit;
     }
 
-    $edades = [];
-    for ($i = 1; $i < $cantidad; $i++) {
-        $edad = intval($_POST["edad_integrante_$i"] ?? 0);
-        $edades[] = $edad;
+    $fecha_nacimiento_dt = new DateTime($fecha_nacimiento);
+    $hoy = new DateTime();
+    $edad = $fecha_nacimiento_dt->diff($hoy)->y;
+
+    if ($edad < 18) {
+      set_flash("Debes ser mayor de 18 años para postularte.", "error");
+      header("Location: postulacion.php");
+      exit;
     }
-    if (count($edades) > 1) {
-        $max = max($edades);
-        $min = min($edades);
-        if (($max - $min) > 6) {
-            set_flash("La diferencia de edad entre hijos no puede superar los 6 años.", "error");
-            header("Location: postulacion.php");
-            exit;
-        }
+    if ($_FILES["comprobante_ingreso"]["size"] > 10 * 1024 * 1024) {
+      set_flash("El comprobante de ingreso no puede superar los 10 MB.", "error");
+      header("Location: postulacion.php");
+      exit;
     }
 
+    $allowed_types = ['application/pdf', 'image/jpeg', 'image/png'];
+    if (!in_array($_FILES["comprobante_ingreso"]["type"], $allowed_types)) {
+      set_flash("El comprobante de ingreso debe ser un archivo PDF, JPG, JPEG o PNG.", "error");
+      header("Location: postulacion.php");
+      exit;
+    }
+    
     try {
         $pdo->beginTransaction();
 
@@ -102,7 +113,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $pdo->commit();
 
-        
         header("Location: index.html");
         exit;
 
@@ -132,18 +142,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       const contenedor = document.getElementById("integrantes_extra");
       contenedor.innerHTML = "";
 
-      if (cantidad > 1) {
+      if (cantidad > 1 && cantidad <= 4) {
         for (let i = 1; i < cantidad; i++) {
           contenedor.innerHTML += `
-            <fieldset>
-              <legend>Integrante ${i}</legend>
-              <label>Nombre:</label><input type="text" name="nombre_integrante_${i}" required><br>
-              <label>Apellido:</label><input type="text" name="apellido_integrante_${i}" required><br>
-              <label>Edad:</label><input type="number" name="edad_integrante_${i}" required><br>
-              <label>Cédula:</label><input type="text" name="ci_integrante_${i}" required><br>
-            </fieldset><br>
+        <fieldset>
+          <legend>Integrante ${i}</legend>
+          <label>Nombre:</label><input type="text" name="nombre_integrante_${i}" required><br>
+          <label>Apellido:</label><input type="text" name="apellido_integrante_${i}" required><br>
+          <label>Edad:</label><input type="number" name="edad_integrante_${i}" required><br>
+          <label>Cédula:</label><input type="text" name="ci_integrante_${i}" required><br>
+        </fieldset><br>
           `;
         }
+      } else if (cantidad > 4) {
+        alert("No pueden ingresar más de 4 personas por postulación.");
+        document.getElementById("cantidad_ingresan").value = 1;
+        return;
       }
     }
   </script>
