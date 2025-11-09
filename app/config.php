@@ -1,8 +1,8 @@
 <?php
-$host	  = 'db';
-$dbname	  = 'cooperativa';
-$user     = 'nahuel.resala';
-$password = '56843589';
+$host	  = 'localhost';
+$dbname	  = 'Cooperativa';
+$user     = 'Nahuel';
+$password = 'River178334$';
 $dsn      = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
 
 $options = [

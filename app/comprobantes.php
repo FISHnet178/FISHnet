@@ -1,6 +1,6 @@
 <?php
 require 'config.php';
-session_start();
+require 'flash_set.php';
 
 class Comprobantes
 {
@@ -13,14 +13,13 @@ class Comprobantes
 
     public function subirComprobante($habID, $archivoTmp, $nombreOriginal, $tipoMime)
     {
-
         if (!file_exists($archivoTmp)) {
             throw new Exception("No se encontró el archivo subido.");
         }
 
         $tiposPermitidos = ['image/jpeg', 'image/png', 'application/pdf'];
         if (!in_array($tipoMime, $tiposPermitidos)) {
-            throw new Exception("Tipo de archivo no permitido.");
+            throw new Exception("Solo se admiten archivos JPEG, JPG, PNG y PDF.");
         }
 
         $contenido = file_get_contents($archivoTmp);
@@ -46,8 +45,6 @@ class Comprobantes
     }
 }
 
-$mensaje = '';
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['comprobante'])) {
     try {
         if (!isset($_SESSION['HABID'])) {
@@ -64,9 +61,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['comprobante'])) {
             $_FILES['comprobante']['type']
         );
 
-        $mensaje = "Comprobante subido con éxito, espera a ser aprobado por un administrador. ID: " . $idComprobante;
+        set_flash("Comprobante subido con éxito, espera a ser aprobado por un administrador. ID: $idComprobante", 'success');
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
     } catch (Exception $e) {
-        $mensaje = "Error: " . $e->getMessage();
+        set_flash("Error: " . $e->getMessage(), 'error');
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
     }
 }
 ?>
@@ -79,14 +80,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['comprobante'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
+
+<?php get_flash();?>
+
 <div class="contenedor">
     <div class="dashboard-content">
         <div class="center-block">
             <h2>Subir Comprobante</h2>
-
-            <?php if (!empty($mensaje)): ?>
-                <p><?php echo htmlspecialchars($mensaje); ?></p>
-            <?php endif; ?>
 
             <form id="datos-form" action="" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="hab_id"
@@ -98,12 +98,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['comprobante'])) {
                 </label>
 
                 <button type="submit">Subir Comprobante</button>
-            </form>
-
-            <div class="action-buttons">
+            </form> 
+        </div>
+        <div class="action-buttons">
                 <p><button class="inicio" onclick="window.location.href='Inicio.php'">← Volver al inicio</button></p>
-            </div>
-            
         </div>
     </div>
     <div class="decoracion"></div>

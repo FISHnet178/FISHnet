@@ -2,12 +2,14 @@
 session_start();
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/flash_set.php'; // <-- incluimos flashes
 
 $currentHabId = $_SESSION['HABID'] ?? 0;
 $stmt = $pdo->prepare("SELECT admin FROM Habitante WHERE HABID = ?");
 $stmt->execute([$currentHabId]);
 $isAdmin = (bool) $stmt->fetchColumn();
 if (!$isAdmin) {
+    set_flash("Debes iniciar sesión como administrador.", 'error');
     header('Location: login.php');
     exit;
 }
@@ -17,98 +19,104 @@ if (empty($_SESSION['csrf_token'])) {
 }
 $csrf = $_SESSION['csrf_token'];
 
-$errors = [];
-$success = false;
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if (!isset($_POST['csrf_token']) || !hash_equals($csrf, $_POST['csrf_token'])) {
-        http_response_code(400);
-        exit('Token CSRF inválido.');
+        set_flash("Token CSRF inválido.", 'error');
+        header('Location: admin_unidad.php');
+        exit;
     }
 
     $action = $_POST['action'];
 
+    // Eliminar unidad
     if ($action === 'delete' && isset($_POST['delete_unidadid'])) {
         $delId = (int) $_POST['delete_unidadid'];
         try {
             $stmtChk = $pdo->prepare("SELECT UnidadID FROM UnidadHabitacional WHERE UnidadID = :uid LIMIT 1");
             $stmtChk->execute([':uid' => $delId]);
             if ($stmtChk->fetchColumn() === false) {
-                $errors[] = 'Unidad no encontrada o ya eliminada.';
+                set_flash('Unidad no encontrada o ya eliminada.', 'error');
             } else {
                 $pdo->beginTransaction();
                 $stmtDel = $pdo->prepare("DELETE FROM UnidadHabitacional WHERE UnidadID = :uid");
                 $stmtDel->execute([':uid' => $delId]);
-                $rows = $stmtDel->rowCount();
                 $pdo->commit();
-
-                if ($rows === 0) $errors[] = 'No se eliminó la unidad (sin filas afectadas).';
-                else $success = true;
+                set_flash('Unidad eliminada correctamente.', 'success');
             }
         } catch (PDOException $e) {
             try { if ($pdo->inTransaction()) $pdo->rollBack(); } catch (Exception $ex) {}
             if ($e->getCode() === '23000') {
-                $errors[] = 'No se puede eliminar la unidad porque existen registros relacionados. Desvincula dependencias primero.';
+                set_flash('No se puede eliminar la unidad porque existen registros relacionados.', 'error');
             } else {
                 error_log('Error eliminando unidad: '.$e->getMessage());
-                $errors[] = 'Error al eliminar la unidad.';
+                set_flash('Error al eliminar la unidad.', 'error');
             }
         }
+        header('Location: admin_unidad.php');
+        exit;
     }
 
+    // Guardar/editar unidad
     if ($action === 'save') {
         $unidadid = isset($_POST['unidadid']) && $_POST['unidadid'] !== '' ? (int) $_POST['unidadid'] : null;
         $terrid = isset($_POST['terrid']) ? (int) $_POST['terrid'] : 0;
         $estado = trim($_POST['estado'] ?? 'disponible');
         $piso = isset($_POST['piso']) ? (int) $_POST['piso'] : 0;
 
+        $errors = [];
         if ($terrid <= 0) $errors[] = "Terreno inválido.";
         if ($piso < 0) $errors[] = "Piso inválido.";
         if ($estado === '') $errors[] = "Estado es obligatorio.";
 
-        if (empty($errors)) {
-            try {
-                if ($unidadid === null) {
-                    $stmtIns = $pdo->prepare("
-                        INSERT INTO UnidadHabitacional (TerrID, Estado, Piso)
-                        VALUES (:terrid, :estado, :piso)
-                    ");
-                    $stmtIns->execute([
-                        ':terrid' => $terrid,
-                        ':estado' => $estado,
-                        ':piso' => $piso
-                    ]);
-                    $success = true;
-                    $unidadid = (int)$pdo->lastInsertId();
-                } else {
-                    $stmtUpd = $pdo->prepare("
-                        UPDATE UnidadHabitacional
-                        SET TerrID = :terrid, Estado = :estado, Piso = :piso
-                        WHERE UnidadID = :unidadid
-                    ");
-                    $stmtUpd->execute([
-                        ':terrid' => $terrid,
-                        ':estado' => $estado,
-                        ':piso' => $piso,
-                        ':unidadid' => $unidadid
-                    ]);
-                    $success = true;
-                }
-            } catch (PDOException $e) {
-                if ($e->getCode() === '23000') {
-                    $errors[] = 'Violación de integridad. Revisa datos y relaciones (FK, UNIQUE, etc.).';
-                } else {
-                    error_log('Error guardando unidad: ' . $e->getMessage());
-                    $errors[] = 'Error al guardar la unidad.';
-                }
-            } catch (Exception $e) {
-                error_log('Error guardando unidad: ' . $e->getMessage());
-                $errors[] = 'Error al guardar la unidad.';
-            }
+        if ($errors) {
+            set_flash(implode("<br>", $errors), 'error');
+            header('Location: admin_unidad.php' . ($unidadid ? "?unidadid=$unidadid" : ''));
+            exit;
         }
+
+        try {
+            if ($unidadid === null) {
+                $stmtIns = $pdo->prepare("
+                    INSERT INTO UnidadHabitacional (TerrID, Estado, Piso)
+                    VALUES (:terrid, :estado, :piso)
+                ");
+                $stmtIns->execute([
+                    ':terrid' => $terrid,
+                    ':estado' => $estado,
+                    ':piso' => $piso
+                ]);
+                set_flash('Unidad creada correctamente.', 'success');
+            } else {
+                $stmtUpd = $pdo->prepare("
+                    UPDATE UnidadHabitacional
+                    SET TerrID = :terrid, Estado = :estado, Piso = :piso
+                    WHERE UnidadID = :unidadid
+                ");
+                $stmtUpd->execute([
+                    ':terrid' => $terrid,
+                    ':estado' => $estado,
+                    ':piso' => $piso,
+                    ':unidadid' => $unidadid
+                ]);
+                set_flash('Unidad actualizada correctamente.', 'success');
+            }
+        } catch (PDOException $e) {
+            if ($e->getCode() === '23000') {
+                set_flash('Violación de integridad. Revisa datos y relaciones (FK, UNIQUE, etc.)', 'error');
+            } else {
+                error_log('Error guardando unidad: ' . $e->getMessage());
+                set_flash('Error al guardar la unidad.', 'error');
+            }
+        } catch (Exception $e) {
+            error_log('Error guardando unidad: ' . $e->getMessage());
+            set_flash('Error al guardar la unidad.', 'error');
+        }
+        header('Location: admin_unidad.php');
+        exit;
     }
 }
 
+// Listado de unidades
 $listaUnidades = [];
 try {
     $stmtAll = $pdo->query("
@@ -120,15 +128,15 @@ try {
     $listaUnidades = $stmtAll->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
     error_log('Error listando unidades: '.$e->getMessage());
-    $errors[] = 'No se pudo cargar la lista de unidades.';
+    set_flash('No se pudo cargar la lista de unidades.', 'error');
 }
 
+// Listado de terrenos
 $terrenos = [];
 try {
     $stmtT = $pdo->query("SELECT TerrID, NombreT FROM Terreno ORDER BY TerrID");
     $terrenos = $stmtT->fetchAll(PDO::FETCH_ASSOC);
-} catch (Exception $e) {
-}
+} catch (Exception $e) {}
 
 $editUnidad = null;
 if (isset($_GET['unidadid'])) {
@@ -141,29 +149,18 @@ if (isset($_GET['unidadid'])) {
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Administrar Unidades Habitacionales</title>
-  <link rel="stylesheet" href="estilos/registro.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Administrar Unidades Habitacionales</title>
+<link rel="stylesheet" href="estilos/registro.css">
 </head>
 <body>
+
+<?php get_flash(); ?> <!-- <-- aquí se muestran los flashes -->
+
 <div class="contenedor">
   <div class="registro-form">
     <h1><?= $editUnidad ? 'Editar Unidad' : 'Crear Unidad' ?></h1>
-
-    <?php if ($errors): ?>
-      <div class="errors">
-        <ul>
-          <?php foreach ($errors as $err): ?>
-            <li><?= htmlspecialchars($err) ?></li>
-          <?php endforeach; ?>
-        </ul>
-      </div>
-    <?php endif; ?>
-
-    <?php if ($success): ?>
-      <div class="success">Operación realizada correctamente.</div>
-    <?php endif; ?>
 
     <form method="post" action="admin_unidad.php" id="unidadForm" novalidate>
       <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
@@ -203,7 +200,9 @@ if (isset($_GET['unidadid'])) {
 
     <p><a class="volver-btn" href="admin.php">← Volver al inicio</a></p>
   </div>
-<div class="decoracion"></div>
+
+  <div class="decoracion"></div>
+
   <div class="lista panel-column" aria-label="Unidades registradas">
     <h2>Unidades registradas</h2>
 
@@ -229,7 +228,7 @@ if (isset($_GET['unidadid'])) {
               <div class="action-buttons" style="display:flex;gap:8px;margin-left:12px;">
                 <a class="editar-link" href="admin_unidad.php?unidadid=<?= (int)$u['UnidadID'] ?>"><button>Editar</button></a>
 
-                <form method="post" onsubmit="return confirm('¿Eliminar la unidad <?= addslashes(htmlspecialchars($u['NombreT'] ?? ('ID '.$u['UnidadID']))) ?>?');" style="display:inline;">
+                <form method="post" style="display:inline;">
                   <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                   <input type="hidden" name="action" value="delete">
                   <input type="hidden" name="delete_unidadid" value="<?= (int)$u['UnidadID'] ?>">
@@ -245,19 +244,19 @@ if (isset($_GET['unidadid'])) {
 </div>
 
 <script>
-  const form = document.getElementById('unidadForm');
-  const clientError = document.getElementById('clientError');
-  form.addEventListener('submit', (e) => {
-    clientError.textContent = '';
-    const terr = form.terrid.value;
-    const piso = form.piso.value;
-    const estado = form.estado.value;
-    if (!terr || !piso || !estado) {
-      clientError.textContent = 'Completa todos los campos obligatorios.';
-      e.preventDefault();
-      return;
-    }
-  });
+const form = document.getElementById('unidadForm');
+const clientError = document.getElementById('clientError');
+form.addEventListener('submit', (e) => {
+  clientError.textContent = '';
+  const terr = form.terrid.value;
+  const piso = form.piso.value;
+  const estado = form.estado.value;
+  if (!terr || !piso || !estado) {
+    clientError.textContent = 'Completa todos los campos obligatorios.';
+    e.preventDefault();
+    return;
+  }
+});
 </script>
 </body>
 </html>

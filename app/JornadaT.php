@@ -1,10 +1,13 @@
 <?php
 require 'config.php';
-session_start();
+require 'flash_set.php';
+
+if (session_status() === PHP_SESSION_NONE) session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!isset($_SESSION['HABID'])) {
+        set_flash("Debes iniciar sesión primero.", 'error');
         header('Location: login.php');
         exit;
     }
@@ -15,8 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $FechaIni = trim($_POST['FechaInicio'] ?? '');
     $FechaFin = trim($_POST['FechaFin'] ?? '');
 
-    if ($Tipo === '' || $Horas === '' || $FechaIni === '' || $FechaFin === '') {
-        die('Completa todos los campos. <a href="JornadaT.php">Volver</a>');
+    if (strtotime($FechaIni) > strtotime($FechaFin)) {
+        set_flash("La fecha de inicio tiene que ser anterior a la fecha de fin.", 'error');
+        header('Location: JornadaT.php');
+        exit;
     }
 
     try {
@@ -35,15 +40,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
         $stmt->execute([$JorID, $HabID]);
 
+        set_flash("Jornada registrada con éxito.", 'success');
         header('Location: Inicio.php');
         exit;
 
     } catch (PDOException $e) {
         if ($e->getCode() == 23000) {
-            die('Esta jornada ya está asociada a este habitante. <a href="JornadaT.php">Volver</a>');
+            set_flash("Esta jornada ya está asociada a este habitante.", 'error');
         } else {
-            throw $e;
+            set_flash("Error: " . $e->getMessage(), 'error');
         }
+        header('Location: JornadaT.php');
+        exit;
     }
 }
 ?>
@@ -53,37 +61,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Registrar Jornada</title>
-    <link rel="stylesheet" href="estilos/JornadaT.css">
+    <link rel="stylesheet" href="estilos/dashboard.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <div class="contenedor">
-        <div class="dashboard-content">
-            <div class="center-block">
-                <h2>Registrar Jornada</h2>
-                <form id="datos-form" action="JornadaT.php" method="POST">
-                    <label>Tipo:
-                        <input type="text" name="Tipo" maxlength="30" required>
-                    </label>
-                    <label>Horas:<br>
-                        <input type="number" name="Horas" min="1" required>
-                    </label>
-                    <label>Fecha de Inicio:<br>
-                        <input type="date" name="FechaInicio" required>
-                    </label>
-                    <label>Fecha de Fin:<br>
-                        <input type="date" name="FechaFin">
-                    </label>
-                    <button type="submit">Registrar</button>
-                </form>
-            </div>
-            <br>
-            
-            <div class="action-buttons">
-                <p><button class="inicio" onclick="window.location.href='Inicio.php'">← Volver al inicio</button></p>
-            </div>
 
+<?php get_flash(); ?>
+
+<div class="contenedor">
+    <div class="dashboard-content">
+        <div class="center-block">
+            <h2>Registrar Jornada</h2>
+            <form id="datos-form" action="JornadaT.php" method="POST">
+                <label>Tipo:
+                    <input type="text" name="Tipo" maxlength="30" required>
+                </label>
+                <label>Horas:<br>
+                    <input type="number" name="Horas" min="1" required>
+                </label>
+                <label>Fecha de Inicio:<br>
+                    <input type="date" name="FechaInicio" required>
+                </label>
+                <label>Fecha de Fin:<br>
+                    <input type="date" name="FechaFin" required>
+                </label>
+                <button type="submit">Registrar</button>
+            </form>
         </div>
-        <div class="decoracion"></div>
+        <br>
+        <div class="action-buttons">
+            <p><button class="inicio" onclick="window.location.href='Inicio.php'">← Volver al inicio</button></p>
+        </div>
     </div>
+    <div class="decoracion"></div>
+</div>
 </body>
 </html>

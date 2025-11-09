@@ -1,6 +1,6 @@
 <?php
 require 'config.php';
-session_start();
+require 'flash_set.php';
 
 if (empty($_SESSION['HABID'])) {
     header('Location: login.php');
@@ -14,8 +14,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ApellidoH = trim($_POST['ApellidoH'] ?? '');
     $CI        = trim($_POST['CI']        ?? '');
 
+    if (!preg_match('/^\d{8}$/', $CI)) {
+        set_flash('La cédula debe contener exactamente 8 dígitos.', 'error');
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit;
+    }
+
     $fotoBinaria = null;
     if (!empty($_FILES['foto']['tmp_name']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+        $tipoArchivo = mime_content_type($_FILES['foto']['tmp_name']);
+        $tiposPermitidos = ['image/jpeg', 'image/jpg', 'image/png'];
+
+        if (!in_array($tipoArchivo, $tiposPermitidos)) {
+            set_flash('Solo se admiten archivos JPEG, JPG y PNG.', 'error');
+            header('Location: ' . $_SERVER['PHP_SELF']);
+            exit;
+        }
+
         $fotoBinaria = file_get_contents($_FILES['foto']['tmp_name']);
     }
 
@@ -48,16 +63,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $_SESSION['nombreH'] = $NombreH;
 
-        $_SESSION['flash'] = [
-            'type' => 'success',
-            'message' => 'Datos guardados correctamente'
-        ];
+        set_flash('Datos guardados correctamente.', 'success');
     } catch (Exception $e) {
         error_log('Error actualizando Habitante ID ' . $HabID . ': ' . $e->getMessage());
-        $_SESSION['flash'] = [
-            'type' => 'error',
-            'message' => 'No se pudieron guardar los datos'
-        ];
+        set_flash('No se pudieron guardar los datos.', 'error');
     }
 
     header('Location: inicio.php');
@@ -71,6 +80,7 @@ $datos = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$datos) {
     die("Usuario no encontrado");
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -85,7 +95,7 @@ if (!$datos) {
     <div class="dashboard-content">
       <div class="center-block">
         <h2>Datos Personales</h2>
-        <form id="datos-form" action="" method="POST" enctype="multipart/form-data" onsubmit="return validarCedula()">
+        <form id="datos-form" action="" method="POST" enctype="multipart/form-data">
           <label>
             Primer nombre:
             <input type="text" name="NombreH" value="<?php echo htmlspecialchars($datos['NombreH'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
@@ -110,20 +120,13 @@ if (!$datos) {
 
           <button type="submit">Guardar Datos</button>
         </form>
+        <?php if (!empty($datos['NombreH'])): ?>
+          <p><a href='inicio.php'>← Volver al inicio</a></p>
+        <?php endif; ?>
       </div>
     </div>
     <div class="decoracion"></div>
   </div>
 
-  <script>
-    function validarCedula() {
-      const cedula = document.getElementById("cedula").value;
-      if (!/^\d{8}$/.test(cedula)) {
-        alert("La cédula debe contener exactamente 8 dígitos.");
-        return false;
-      }
-      return true;
-    }
-  </script>
 </body>
 </html>

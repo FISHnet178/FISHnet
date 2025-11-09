@@ -2,12 +2,14 @@
 session_start();
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/flash_set.php'; // <-- incluir el archivo de flashes
 
 $currentHabId = $_SESSION['HABID'] ?? 0;
 $stmt = $pdo->prepare("SELECT admin FROM Habitante WHERE HABID = ?");
 $stmt->execute([$currentHabId]);
 $isAdmin = (bool) $stmt->fetchColumn();
 if (!$isAdmin) {
+    set_flash("Debes iniciar sesión como administrador.", 'error');
     header('Location: login.php');
     exit;
 }
@@ -17,49 +19,44 @@ if (empty($_SESSION['csrf_token'])) {
 }
 $csrf = $_SESSION['csrf_token'];
 
-$errors = [];
-$success = false;
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if (!isset($_POST['csrf_token']) || !hash_equals($csrf, $_POST['csrf_token'])) {
-        http_response_code(400);
-        exit('Token CSRF inválido.');
+        set_flash("Token CSRF inválido.", 'error');
+        header('Location: admin_terreno.php');
+        exit;
     }
 
     $action = $_POST['action'];
 
+    // Eliminar terreno
     if ($action === 'delete' && isset($_POST['delete_terrid'])) {
         $delId = (int) $_POST['delete_terrid'];
-
         try {
             $stmtChk = $pdo->prepare("SELECT TerrID FROM Terreno WHERE TerrID = :tid LIMIT 1");
             $stmtChk->execute([':tid' => $delId]);
             if ($stmtChk->fetchColumn() === false) {
-                $errors[] = 'Terreno no encontrado o ya eliminado.';
+                set_flash('Terreno no encontrado o ya eliminado.', 'error');
             } else {
                 $pdo->beginTransaction();
                 $stmtDel = $pdo->prepare("DELETE FROM Terreno WHERE TerrID = :tid");
                 $stmtDel->execute([':tid' => $delId]);
-                $rows = $stmtDel->rowCount();
                 $pdo->commit();
-
-                if ($rows === 0) {
-                    $errors[] = 'No se eliminó el terreno (sin filas afectadas).';
-                } else {
-                    $success = true;
-                }
+                set_flash('Terreno eliminado correctamente.', 'success');
             }
         } catch (PDOException $e) {
             try { if ($pdo->inTransaction()) $pdo->rollBack(); } catch (Exception $ex) {}
             if ($e->getCode() === '23000') {
-                $errors[] = 'No se puede eliminar el terreno porque existen registros relacionados. Elimina o desvincula antes las dependencias.';
+                set_flash('No se puede eliminar el terreno porque existen registros relacionados.', 'error');
             } else {
                 error_log('Error eliminando terreno: '.$e->getMessage());
-                $errors[] = 'Error al eliminar el terreno.';
+                set_flash('Error al eliminar el terreno.', 'error');
             }
         }
+        header('Location: admin_terreno.php');
+        exit;
     }
 
+    // Guardar/editar terreno
     if ($action === 'save') {
         $terrid = isset($_POST['terrid']) && $_POST['terrid'] !== '' ? (int) $_POST['terrid'] : null;
         $nombreT = trim($_POST['nombreT'] ?? '');
@@ -68,61 +65,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $calle = trim($_POST['calle'] ?? '');
         $numeroPuerta = isset($_POST['numeroPuerta']) ? (int) $_POST['numeroPuerta'] : 0;
 
+        $errors = [];
         if ($nombreT === '') $errors[] = "Nombre del terreno es obligatorio.";
         if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fechaConstruccion)) $errors[] = "Fecha de construcción inválida (AAAA-MM-DD).";
         if ($tipoTerreno === '') $errors[] = "Tipo de terreno es obligatorio.";
         if ($calle === '') $errors[] = "Calle es obligatoria.";
         if ($numeroPuerta <= 0) $errors[] = "Número de puerta inválido.";
 
-        if (empty($errors)) {
-            try {
-                if ($terrid === null) {
-                    $stmtIns = $pdo->prepare("
-                        INSERT INTO Terreno (NombreT, FechaConstruccion, TipoTerreno, Calle, NumeroPuerta)
-                        VALUES (:nombreT, :fechaConstruccion, :tipoTerreno, :calle, :numeroPuerta)
-                    ");
-                    $stmtIns->execute([
-                        ':nombreT' => $nombreT,
-                        ':fechaConstruccion' => $fechaConstruccion,
-                        ':tipoTerreno' => $tipoTerreno,
-                        ':calle' => $calle,
-                        ':numeroPuerta' => $numeroPuerta
-                    ]);
-                    $success = true;
-                    $terrid = (int)$pdo->lastInsertId();
-                } else {
-                    $stmtUpd = $pdo->prepare("
-                        UPDATE Terreno
-                        SET NombreT = :nombreT, FechaConstruccion = :fechaConstruccion, TipoTerreno = :tipoTerreno, Calle = :calle, NumeroPuerta = :numeroPuerta
-                        WHERE TerrID = :terrid
-                    ");
-                    $stmtUpd->execute([
-                        ':nombreT' => $nombreT,
-                        ':fechaConstruccion' => $fechaConstruccion,
-                        ':tipoTerreno' => $tipoTerreno,
-                        ':calle' => $calle,
-                        ':numeroPuerta' => $numeroPuerta,
-                        ':terrid' => $terrid
-                    ]);
-                    $success = true;
-                }
-            } catch (Exception $e) {
-                error_log('Error guardando terreno: ' . $e->getMessage());
-                $errors[] = 'Error al guardar el terreno.';
-            }
+        if ($errors) {
+            set_flash(implode("<br>", $errors), 'error');
+            header('Location: admin_terreno.php' . ($terrid ? "?terrid=$terrid" : ''));
+            exit;
         }
+
+        try {
+            if ($terrid === null) {
+                $stmtIns = $pdo->prepare("
+                    INSERT INTO Terreno (NombreT, FechaConstruccion, TipoTerreno, Calle, NumeroPuerta)
+                    VALUES (:nombreT, :fechaConstruccion, :tipoTerreno, :calle, :numeroPuerta)
+                ");
+                $stmtIns->execute([
+                    ':nombreT' => $nombreT,
+                    ':fechaConstruccion' => $fechaConstruccion,
+                    ':tipoTerreno' => $tipoTerreno,
+                    ':calle' => $calle,
+                    ':numeroPuerta' => $numeroPuerta
+                ]);
+                set_flash('Terreno creado correctamente.', 'success');
+            } else {
+                $stmtUpd = $pdo->prepare("
+                    UPDATE Terreno
+                    SET NombreT = :nombreT, FechaConstruccion = :fechaConstruccion, TipoTerreno = :tipoTerreno, Calle = :calle, NumeroPuerta = :numeroPuerta
+                    WHERE TerrID = :terrid
+                ");
+                $stmtUpd->execute([
+                    ':nombreT' => $nombreT,
+                    ':fechaConstruccion' => $fechaConstruccion,
+                    ':tipoTerreno' => $tipoTerreno,
+                    ':calle' => $calle,
+                    ':numeroPuerta' => $numeroPuerta,
+                    ':terrid' => $terrid
+                ]);
+                set_flash('Terreno actualizado correctamente.', 'success');
+            }
+        } catch (Exception $e) {
+            error_log('Error guardando terreno: ' . $e->getMessage());
+            set_flash('Error al guardar el terreno.', 'error');
+        }
+        header('Location: admin_terreno.php');
+        exit;
     }
 }
 
+// Listado de terrenos
 $listaTerrenos = [];
 try {
     $stmtAll = $pdo->query("SELECT TerrID, NombreT, FechaConstruccion, TipoTerreno, Calle, NumeroPuerta FROM Terreno ORDER BY TerrID DESC");
     $listaTerrenos = $stmtAll->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
     error_log('Error listando terrenos: '.$e->getMessage());
-    $errors[] = 'No se pudo cargar la lista de terrenos.';
+    set_flash('No se pudo cargar la lista de terrenos.', 'error');
 }
 
+// Edición
 $editTerr = null;
 if (isset($_GET['terrid'])) {
     $tid = (int) $_GET['terrid'];
@@ -134,29 +139,18 @@ if (isset($_GET['terrid'])) {
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Administrar Terrenos</title>
-  <link rel="stylesheet" href="estilos/registro.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Administrar Terrenos</title>
+<link rel="stylesheet" href="estilos/registro.css">
 </head>
 <body>
+
+<?php get_flash(); ?> <!-- <-- aquí se muestran los flashes -->
+
 <div class="contenedor">
   <div class="registro-form">
     <h1><?= $editTerr ? 'Editar Terreno' : 'Crear Terreno' ?></h1>
-
-    <?php if ($errors): ?>
-      <div class="errors">
-        <ul>
-          <?php foreach ($errors as $err): ?>
-            <li><?= htmlspecialchars($err) ?></li>
-          <?php endforeach; ?>
-        </ul>
-      </div>
-    <?php endif; ?>
-
-    <?php if ($success): ?>
-      <div class="success">Operación realizada correctamente.</div>
-    <?php endif; ?>
 
     <form method="post" action="admin_terreno.php" id="terrenoForm" novalidate>
       <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
@@ -190,7 +184,9 @@ if (isset($_GET['terrid'])) {
 
     <p><a class="volver-btn" href="admin.php">← Volver al inicio</a></p>
   </div>
-        <div class="decoracion"></div>
+
+  <div class="decoracion"></div>
+
   <div class="lista panel-column" aria-label="Terrenos registrados">
     <h2>Terrenos registrados</h2>
 
@@ -212,7 +208,7 @@ if (isset($_GET['terrid'])) {
               <div class="action-buttons" style="display:flex;gap:8px;margin-left:12px;">
                 <a class="editar-link" href="admin_terreno.php?terrid=<?= (int)$t['TerrID'] ?>"><button>Editar</button></a>
 
-                <form method="post" onsubmit="return confirm('¿Eliminar el terreno <?= addslashes(htmlspecialchars($t['NombreT'])) ?>?');" style="display:inline;">
+                <form method="post" style="display:inline;">
                   <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                   <input type="hidden" name="action" value="delete">
                   <input type="hidden" name="delete_terrid" value="<?= (int)$t['TerrID'] ?>">
@@ -228,21 +224,21 @@ if (isset($_GET['terrid'])) {
 </div>
 
 <script>
-  const form = document.getElementById('terrenoForm');
-  const clientError = document.getElementById('clientError');
-  form.addEventListener('submit', (e) => {
-    clientError.textContent = '';
-    const nombre = form.nombreT.value.trim();
-    const fecha = form.fechaConstruccion.value;
-    const tipo = form.tipoTerreno.value.trim();
-    const calle = form.calle.value.trim();
-    const num = form.numeroPuerta.value;
-    if (!nombre || !fecha || !tipo || !calle || !num) {
-      clientError.textContent = 'Completa todos los campos obligatorios.';
-      e.preventDefault();
-      return;
-    }
-  });
+const form = document.getElementById('terrenoForm');
+const clientError = document.getElementById('clientError');
+form.addEventListener('submit', (e) => {
+  clientError.textContent = '';
+  const nombre = form.nombreT.value.trim();
+  const fecha = form.fechaConstruccion.value;
+  const tipo = form.tipoTerreno.value.trim();
+  const calle = form.calle.value.trim();
+  const num = form.numeroPuerta.value;
+  if (!nombre || !fecha || !tipo || !calle || !num) {
+    clientError.textContent = 'Completa todos los campos obligatorios.';
+    e.preventDefault();
+    return;
+  }
+});
 </script>
 </body>
 </html>

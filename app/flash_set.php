@@ -34,9 +34,10 @@ if (!empty($_SESSION['flash']) && isset($_SESSION['flash']['msg'])) {
     $msg   = htmlspecialchars($flash['msg']);
 
     echo '<div class="flash-message" style="
-        position:fixed;
-        top:20px;
-        right:20px;
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
         background:' . $color . ';
         color:#fff;
         padding:12px 20px;
@@ -49,10 +50,11 @@ if (!empty($_SESSION['flash']) && isset($_SESSION['flash']['msg'])) {
 
     <style>
     @keyframes fadeInOut {
-        0% { opacity: 0; transform: translateY(-10px); }
-        10% { opacity: 1; transform: translateY(0); }
+        0% { opacity: 0; transform: translateY(-10px) translateX(-50%); }
+        10% { opacity: 1; transform: translateY(0) translateX(-50%); }
         80% { opacity: 1; }
-        100% { opacity: 0; transform: translateY(-10px); }
+        100% { opacity: 0; transform: translateY(-10px) translateX(-50%); }
     }
     </style>';
 }
+?>

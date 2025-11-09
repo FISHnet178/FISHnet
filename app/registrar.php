@@ -87,8 +87,5 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </label>
                 <button type="submit">Registrarse</button>
             </form>
-
-            <p>
-                <a class="volver-btn" href="index.html">← Volver al inicio</a>
-            </p>
+            <p><a class="volver-btn" href="index.html">← Volver al inicio</a></p>
         </div>

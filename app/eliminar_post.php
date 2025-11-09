@@ -4,39 +4,40 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/flash_set.php';
 
-if (!isset($_SESSION['isAdmin']) || !$_SESSION['isAdmin']) {
-    set_flash('No tienes permisos para eliminar publicaciones.', 'error');
-    header('Location: inicio.php');
-    exit;
-}
-
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_POST['foro_id'])) {
+    set_flash('Acción no permitida.', 'error');
     header('Location: inicio.php');
     exit;
 }
 
 $foroId = (int)$_POST['foro_id'];
 
-try {
-    $check = $pdo->prepare('SELECT titulo FROM Foro WHERE ForoID = :id');
-    $check->execute([':id' => $foroId]);
-    $row = $check->fetch();
+function eliminarPostRecursivo($pdo, $foroId) {
+    $stmt = $pdo->prepare('SELECT ForoID FROM Foro WHERE ParentID = :id');
+    $stmt->execute([':id' => $foroId]);
+    $hijos = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-    if (!$row) {
-        echo "<script>
-            alert('Publicación no encontrada.');
-            window.location.href = 'inicio.php';
-        </script>";
+    foreach ($hijos as $hijoId) {
+        eliminarPostRecursivo($pdo, $hijoId);
+    }
+
+    $del = $pdo->prepare('DELETE FROM Foro WHERE ForoID = :id');
+    $del->execute([':id' => $foroId]);
+}
+
+try {
+    $check = $pdo->prepare('SELECT ForoID FROM Foro WHERE ForoID = :id');
+    $check->execute([':id' => $foroId]);
+    if (!$check->fetch()) {
+        set_flash('Publicación no encontrada.', 'error');
+        header('Location: inicio.php');
         exit;
     }
 
-    $stmt = $pdo->prepare('DELETE FROM Foro WHERE ForoID = :id OR ParentID = :id');
-    $stmt->execute([':id' => $foroId]);
+    eliminarPostRecursivo($pdo, $foroId);
 
-    echo "<script>
-        alert('Publicación eliminada correctamente.');
-        window.location.href = 'inicio.php';
-    </script>";
+    set_flash('Publicación eliminada.', 'success');
+    header('Location: inicio.php');
     exit;
 
 } catch (PDOException $e) {
