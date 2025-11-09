@@ -2,7 +2,7 @@
 session_start();
 
 require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/flash_set.php'; // <-- incluimos flashes
+require_once __DIR__ . '/flash_set.php';
 
 $currentHabId = $_SESSION['HABID'] ?? 0;
 $stmt = $pdo->prepare("SELECT admin FROM Habitante WHERE HABID = ?");
@@ -28,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
     $action = $_POST['action'];
 
-    // Eliminar unidad
     if ($action === 'delete' && isset($_POST['delete_unidadid'])) {
         $delId = (int) $_POST['delete_unidadid'];
         try {
@@ -56,7 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         exit;
     }
 
-    // Guardar/editar unidad
     if ($action === 'save') {
         $unidadid = isset($_POST['unidadid']) && $_POST['unidadid'] !== '' ? (int) $_POST['unidadid'] : null;
         $terrid = isset($_POST['terrid']) ? (int) $_POST['terrid'] : 0;
@@ -116,7 +114,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-// Listado de unidades
 $listaUnidades = [];
 try {
     $stmtAll = $pdo->query("
@@ -131,7 +128,6 @@ try {
     set_flash('No se pudo cargar la lista de unidades.', 'error');
 }
 
-// Listado de terrenos
 $terrenos = [];
 try {
     $stmtT = $pdo->query("SELECT TerrID, NombreT FROM Terreno ORDER BY TerrID");
@@ -156,7 +152,7 @@ if (isset($_GET['unidadid'])) {
 </head>
 <body>
 
-<?php get_flash(); ?> <!-- <-- aquí se muestran los flashes -->
+<?php get_flash(); ?>
 
 <div class="contenedor">
   <div class="registro-form">

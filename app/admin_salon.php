@@ -19,7 +19,6 @@ if (empty($_SESSION['csrf_token'])) {
 }
 $csrf = $_SESSION['csrf_token'];
 
-// Función para convertir horario HH:MM a entero
 function timeInputToInt(string $hhmm): ?int {
     if (!preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $hhmm)) return null;
     $parts = explode(':', $hhmm);
@@ -29,7 +28,6 @@ function timeInputToInt(string $hhmm): ?int {
     return $hh * 100 + $mm;
 }
 
-// Procesamiento de POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if (!isset($_POST['csrf_token']) || !hash_equals($csrf, $_POST['csrf_token'])) {
         set_flash("Token CSRF inválido.", 'error');
@@ -39,7 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
     $action = $_POST['action'];
 
-    // Eliminar salón
     if ($action === 'delete' && isset($_POST['delete_salonid'])) {
         $delId = (int) $_POST['delete_salonid'];
         try {
@@ -67,7 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         exit;
     }
 
-    // Crear/actualizar salón
     if ($action === 'save') {
         $salonid = isset($_POST['salonid']) && $_POST['salonid'] !== '' ? (int) $_POST['salonid'] : null;
         $terrid = isset($_POST['terrid']) ? (int) $_POST['terrid'] : 0;
@@ -133,7 +129,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-// Listado de salones
 $listaSalones = [];
 try {
     $stmtAll = $pdo->query("
@@ -147,14 +142,12 @@ try {
     set_flash('No se pudo cargar la lista de salones.', 'error');
 }
 
-// Terrenos
 $terrenos = [];
 try {
     $stmtT = $pdo->query("SELECT TerrID, NombreT FROM Terreno ORDER BY TerrID");
     $terrenos = $stmtT->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {}
 
-// Edición
 $editSalon = null;
 if (isset($_GET['salonid'])) {
     $sid = (int) $_GET['salonid'];
@@ -184,7 +177,7 @@ if (isset($_GET['salonid'])) {
 </head>
 <body>
 
-<?php get_flash(); ?> <!-- flashes -->
+<?php get_flash(); ?>
 
 <div class="contenedor">
   <div class="registro-form">

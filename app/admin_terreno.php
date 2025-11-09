@@ -2,7 +2,7 @@
 session_start();
 
 require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/flash_set.php'; // <-- incluir el archivo de flashes
+require_once __DIR__ . '/flash_set.php';
 
 $currentHabId = $_SESSION['HABID'] ?? 0;
 $stmt = $pdo->prepare("SELECT admin FROM Habitante WHERE HABID = ?");
@@ -28,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
     $action = $_POST['action'];
 
-    // Eliminar terreno
     if ($action === 'delete' && isset($_POST['delete_terrid'])) {
         $delId = (int) $_POST['delete_terrid'];
         try {
@@ -56,7 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         exit;
     }
 
-    // Guardar/editar terreno
     if ($action === 'save') {
         $terrid = isset($_POST['terrid']) && $_POST['terrid'] !== '' ? (int) $_POST['terrid'] : null;
         $nombreT = trim($_POST['nombreT'] ?? '');
@@ -117,7 +115,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-// Listado de terrenos
 $listaTerrenos = [];
 try {
     $stmtAll = $pdo->query("SELECT TerrID, NombreT, FechaConstruccion, TipoTerreno, Calle, NumeroPuerta FROM Terreno ORDER BY TerrID DESC");
@@ -127,7 +124,6 @@ try {
     set_flash('No se pudo cargar la lista de terrenos.', 'error');
 }
 
-// Edición
 $editTerr = null;
 if (isset($_GET['terrid'])) {
     $tid = (int) $_GET['terrid'];
@@ -146,7 +142,7 @@ if (isset($_GET['terrid'])) {
 </head>
 <body>
 
-<?php get_flash(); ?> <!-- <-- aquí se muestran los flashes -->
+<?php get_flash(); ?>
 
 <div class="contenedor">
   <div class="registro-form">
