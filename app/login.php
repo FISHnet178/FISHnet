@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         !empty($user['CI']);
 
     if ($_SESSION['perfil_actualizado']) {
-        header("Location: Inicio.php");
+        header("Location: inicio.php");
     } else {
         header("Location: guardar_datos.php");
     }

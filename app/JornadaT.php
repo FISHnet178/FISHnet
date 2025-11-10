@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$JorID, $HabID]);
 
         set_flash("Jornada registrada con éxito.", 'success');
-        header('Location: Inicio.php');
+        header('Location: inicio.php');
         exit;
 
     } catch (PDOException $e) {

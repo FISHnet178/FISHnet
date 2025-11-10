@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['comprobante'])) {
             </form> 
         </div>
         <div class="action-buttons">
-                <p><button class="inicio" onclick="window.location.href='Inicio.php'">← Volver al inicio</button></p>
+                <p><button class="inicio" onclick="window.location.href='inicio.php'">← Volver al inicio</button></p>
         </div>
     </div>
     <div class="decoracion"></div>

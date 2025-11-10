@@ -194,9 +194,11 @@ if (isset($_GET['unidadid'])) {
       <div class="error" id="clientError" aria-live="polite"></div>
     </form>
 
-    <p><a class="volver-btn" href="admin.php">← Volver al inicio</a></p>
+    <div class="action-buttons">
+      <p><button class="inicio" onclick="window.location.href='admin.php'">← Volver al inicio</button></p>
+    </div>
   </div>
-
+          
   <div class="decoracion"></div>
 
   <div class="lista panel-column" aria-label="Unidades registradas">

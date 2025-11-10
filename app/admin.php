@@ -323,7 +323,7 @@ $pendientesComprobantes = $pdo
 
         <div class="action-buttons" style="margin-top:24px; gap:12px;">
             <a href="logout.php"><button type="button" class="btn">Cerrar sesión</button></a>
-            <a href="Inicio.php"><button type="button" class="btn btn-secondary">Ir a inicio</button></a>
+            <a href="inicio.php"><button type="button" class="btn btn-secondary">Ir a inicio</button></a>
         </div>
     </div>
     <div class="decoracion"></div>
