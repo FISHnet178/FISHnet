@@ -69,31 +69,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php get_flash(); ?>
 
 <div class="contenedor">
-    <div class="dashboard-content">
-        <div class="center-block">
+        <div class="datos-form">
             <h2>Registrar Jornada</h2>
             <form id="datos-form" action="JornadaT.php" method="POST">
-                <label>Tipo:
-                    <input type="text" name="Tipo" maxlength="30" required>
-                </label>
-                <label>Horas:<br>
-                    <input type="number" name="Horas" min="1" required>
-                </label>
-                <label>Fecha de Inicio:<br>
+                <input type="text" name="Tipo" maxlength="30" placeholder="Tipo" required>
+                <input type="number" name="Horas" min="1" placeholder="Horas" required>
+                Fecha de Inicio:
                     <input type="date" name="FechaInicio" required>
-                </label>
-                <label>Fecha de Fin:<br>
+                Fecha de Fin:
                     <input type="date" name="FechaFin" required>
-                </label>
                 <button type="submit">Registrar</button>
             </form>
+            <div class="action-buttons">
+                <p><button class="inicio" onclick="window.location.href='Inicio.php'">← Volver al inicio</button></p>
+            </div>
         </div>
-        <br>
-        <div class="action-buttons">
-            <p><button class="inicio" onclick="window.location.href='Inicio.php'">← Volver al inicio</button></p>
-        </div>
+        <div class="decoracion"></div>
     </div>
-    <div class="decoracion"></div>
-</div>
+
 </body>
 </html>

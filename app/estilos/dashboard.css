@@ -5,7 +5,6 @@ body, html {
   font-family: Arial, sans-serif;
 }
 
-
 .action-buttons button {
   padding: 8px 12px;
   background-color: #004080;
@@ -30,10 +29,10 @@ body, html {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 
 .center-block {
-  margin: auto 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -61,7 +60,9 @@ body, html {
   font-size: 0.9em;
 }
 
-#datos-form input {
+#datos-form input, 
+#datos-form select, 
+#datos-form textarea {
   padding: 10px;
   border: 1px solid #ccc;
   font-size: 1em;
@@ -83,6 +84,9 @@ body, html {
 
 .decoracion {
   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: repeating-linear-gradient(
     -45deg,
     #004080,
@@ -90,4 +94,98 @@ body, html {
     #84a3f7 15px,
     #84a3f7 30px
   );
+  padding: 24px;
+  box-sizing: border-box;
+  position: relative;
 }
+
+/* Asegura que el calendario se vea por encima del fondo y tenga tamaño controlado */
+#calendario {
+  z-index: 1;
+  width: 100%;
+  max-width: 720px; /* ajustar según diseño */
+  background: #f2f2f2; /* ligero lavado para contraste opcional */
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  color: #222;
+  box-sizing: border-box;
+}
+
+
+.fila {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.celda {
+  flex: 1;
+  padding: 5px;
+  margin: 1px;
+  border: 1px solid #ccc;
+  text-align: center;
+  font-size: 12px;
+  cursor: pointer;
+  background: #e9ecef;
+  user-select: none;
+  min-width: 60px;
+}
+
+.celda.ocupado {
+  background: #dc3545;
+  color: white;
+  cursor: not-allowed;
+}
+
+.celda.seleccionado {
+  background: #007bff;
+  color: white;
+}
+
+.errors {
+  background: #f8d7da;
+  color: #842029;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.success {
+  background: #d1e7dd;
+  color: #0f5132;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.info-line {
+  color: #004080;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.legend {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  color: #fff;
+  justify-content: center;
+}
+
+.legend span {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.legend .ocup {
+  background: #dc3545;
+}
+
+.legend .libre {
+  background: #007bff;
+}
+
+#reserva-tooltip {position: fixed; pointer-events: none; z-index:9999; padding:8px 10px; background: rgba(0,0,0,0.85); color:#fff; font-size:13px; border-radius:6px; max-width:300px; display:none; box-shadow:0 6px 18px rgba(0,0,0,0.25);}
+#reserva-tooltip strong{display:block; margin-bottom:6px;}

@@ -131,7 +131,7 @@ function renderPost($post, $respuestasByPost, $isAdmin, $level = 0) {
                 <a href="comprobantes.php" class="btn">Subir comprobantes de pago</a>
                 <a href="historial.php" class="btn">Historial de acciones</a>
                 <a href="foro.php" class="btn">Crear publicación</a>
-                <a href="salon_comunal.php" class="btn">Reserva de salones comunes</a>
+                <a href="reservar_salon.php" class="btn">Reserva de salones comunes</a>
                 <a href="logout.php" class="btn">Cerrar sesión</a>
             </div>
         </section>

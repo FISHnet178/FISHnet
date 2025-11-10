@@ -63,20 +63,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Iniciar Sesión - Cooperativa</title>
-    <link rel="stylesheet" href="estilos/login.css">
+    <link rel="stylesheet" href="estilos/dashboard.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <div class="contenedor">
-        <div class="login-form">
-            <h2>INICIAR SESIÓN</h2>
+        <div class="datos-form">
+            <h2>Iniciar sesión</h2>
             <form action="login.php" method="POST">
                 <input type="text" name="usuario" placeholder="Usuario" required>
                 <input type="password" name="password" placeholder="Contraseña" required>
-                <button type="submit">ENVIAR</button>
-                <p>¿No tienes cuenta? <a href="registrar.php">Regístrate</a></p>
-                <p><a href="index.html">Volver al inicio</a></p>
+                <button type="submit">Iniciar sesión</button>
             </form>
+            <p>¿No tienes cuenta? <a href="registrar.php">Regístrate</a></p>
+                <div class="action-buttons">
+                    <p><button class="inicio" onclick="window.location.href='index.html'">← Volver al inicio</button></p>
+                </div>
         </div>
         <div class="decoracion"></div>
     </div>

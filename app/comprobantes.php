@@ -83,9 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['comprobante'])) {
 
 <?php get_flash();?>
 
-<div class="contenedor">
-    <div class="dashboard-content">
-        <div class="center-block">
+    <div class="contenedor">
+        <div class="datos-form">
             <h2>Subir Comprobante</h2>
 
             <form id="datos-form" action="" method="POST" enctype="multipart/form-data">
@@ -98,13 +97,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['comprobante'])) {
                 </label>
 
                 <button type="submit">Subir Comprobante</button>
-            </form> 
-        </div>
-        <div class="action-buttons">
+            </form>
+            <div class="action-buttons">
                 <p><button class="inicio" onclick="window.location.href='inicio.php'">← Volver al inicio</button></p>
+            </div>
         </div>
+        <div class="decoracion"></div>
     </div>
-    <div class="decoracion"></div>
-</div>
 </body>
 </html>

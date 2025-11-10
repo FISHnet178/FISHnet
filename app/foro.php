@@ -84,24 +84,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php get_flash();?>
 
 <div class="contenedor">
-    <div class="dashboard-content">
-        <div class="center-block">
+        <div class="datos-form">
             <h2 id="form-title">Foro</h2>
             <form id="datos-form" action="foro.php" method="POST">
-                <label id="tituloWrap">Titulo:
-                    <input type="text" name="Titulo" id="Titulo">
-                </label>
-                <label>Cuerpo:
-                    <textarea name="Cuerpo" id="Cuerpo" rows="6" required></textarea>
-                </label>
+                    <input type="text" name="Titulo" placeholder="Título" id="Titulo">
+                    <textarea name="Cuerpo" id="Cuerpo" rows="6" placeholder="Cuerpo" style="text size" required></textarea>
                 <input type="hidden" name="ParentID" id="ParentID" value="">
                 <button type="submit">Enviar</button>
             </form>
+            <div class="action-buttons">
+                <p><button class="inicio" onclick="window.location.href='Inicio.php'">← Volver al inicio</button></p>
+            </div>
         </div>
-        <div class="action-buttons">
-            <p><button class="inicio" onclick="window.location.href='Inicio.php'">← Volver al inicio</button></p>
-        </div>
-    </div>
     <div class="decoracion"></div>
 </div>
 

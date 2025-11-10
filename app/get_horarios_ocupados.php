@@ -1,39 +1,75 @@
 <?php
+// get_horarios_ocupados.php
+// Devuelve JSON con las reservas de un salón en una fecha.
+// Formato: [ { inicio: "HH:MM", fin: "HH:MM", nombre: "Nombre Reservante", comentario: "..." }, ... ]
+
 require 'config.php';
 session_start();
 header('Content-Type: application/json; charset=utf-8');
-$salonid = isset($_GET['salonid']) ? (int)$_GET['salonid'] : 0;
-$fecha = $_GET['fecha'] ?? '';
-if (!$salonid || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
-    echo json_encode([]);
+
+// Opcional: exigir usuario logueado (ajusta según tu lógica)
+$habSession = $_SESSION['HABID'] ?? null;
+if (!$habSession) {
+    http_response_code(403);
+    echo json_encode(['error' => 'No autorizado']);
     exit;
 }
-$stmt = $pdo->prepare("SELECT HoraInicio, HoraFin FROM reservasalon WHERE SalonID=:sid AND Fecha=:fecha");
-$stmt->execute([':sid'=>$salonid, ':fecha'=>$fecha]);
-$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-$out = [];
-foreach ($rows as $r) {
-    $hi = $r['HoraInicio'];
-    $hf = $r['HoraFin'];
-    $normalize = function($v){
-        if ($v === null) return null;
-        $s = trim((string)$v);
-        if (preg_match('/^\d{1,2}:\d{2}$/', $s)) return $s;
-        if (preg_match('/^\d{3,4}$/', $s)) {
-            $len = strlen($s);
-            $hh = substr($s, 0, $len-2);
-            $mm = substr($s, -2);
-            return str_pad($hh,2,'0',STR_PAD_LEFT).':'.str_pad($mm,2,'0',STR_PAD_LEFT);
-        }
-        if (is_numeric($s) && (int)$s >= 0 && (int)$s <= 24) {
-            return str_pad((int)$s,2,'0',STR_PAD_LEFT).':00';
-        }
-        return null;
-    };
-    $hin = $normalize($hi);
-    $hfn = $normalize($hf);
-    if ($hin && $hfn) {
-        $out[] = ['inicio' => $hin, 'fin' => $hfn];
-    }
+
+// Parámetros esperados
+$salonid = isset($_GET['salonid']) ? (int)$_GET['salonid'] : 0;
+$fecha = $_GET['fecha'] ?? '';
+
+// Validaciones básicas
+if ($salonid <= 0 || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Parámetros inválidos']);
+    exit;
 }
-echo json_encode($out);
+
+try {
+    // Consulta reservas del salón en la fecha dada, trayendo nombre y comentario.
+    // Ajusta los nombres de columnas si tu esquema difiere.
+    $stmt = $pdo->prepare("
+        SELECT
+            TIME_FORMAT(r.HoraInicio, '%H:%i') AS inicio,
+            TIME_FORMAT(r.HoraFin, '%H:%i') AS fin,
+            COALESCE(
+              NULLIF(CONCAT_WS(' ', TRIM(h.NombreH), TRIM(h.ApellidoH)), ''),
+              NULLIF(h.Usuario, ''),
+              CONCAT('HAB#', r.HabID)
+            ) AS nombre,
+            r.Comentario AS comentario
+        FROM reservasalon r
+        LEFT JOIN Habitante h ON r.HabID = h.HABID
+        WHERE r.SalonID = :sid
+          AND r.Fecha = :fecha
+        ORDER BY r.HoraInicio ASC
+    ");
+    $stmt->execute([':sid' => $salonid, ':fecha' => $fecha]);
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $out = [];
+    foreach ($rows as $r) {
+        // Normalizar/filtrar filas incompletas
+        if (!isset($r['inicio']) || !isset($r['fin'])) continue;
+        $in = substr($r['inicio'], 0, 5);
+        $fin = substr($r['fin'], 0, 5);
+        $nombre = $r['nombre'] ?? 'Usuario';
+        $coment = (isset($r['comentario']) && $r['comentario'] !== '') ? $r['comentario'] : null;
+
+        $out[] = [
+            'inicio' => $in,
+            'fin' => $fin,
+            'nombre' => $nombre,
+            'comentario' => $coment
+        ];
+    }
+
+    echo json_encode($out);
+    exit;
+} catch (Exception $e) {
+    // No revelar detalles del error en producción
+    http_response_code(500);
+    echo json_encode(['error' => 'Error del servidor']);
+    exit;
+}

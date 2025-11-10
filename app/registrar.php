@@ -66,26 +66,27 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
     <meta charset="UTF-8">
     <title>Registro</title>
-    <link rel="stylesheet" href="estilos/registro.css">
+    <link rel="stylesheet" href="estilos/dashboard.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <div class="contenedor">
-        <div class="registro-form">
+        <div class="datos-form">
             <h2>Registro</h2>
 
             <?= get_flash() ?>
 
             <form action="registrar.php" method="POST">
-                <label>
-                    Usuario:
-                    <input type="text" name="Usuario" required>
-                </label>
-                <label>
-                    Contraseña:
-                    <input type="password" name="Contraseña" required>
-                </label>
+                <input type="text" name="usuario" placeholder="Usuario" required>
+                <input type="password" name="password" placeholder="Contraseña" required>
                 <button type="submit">Registrarse</button>
             </form>
-            <p><a class="volver-btn" href="index.html">← Volver al inicio</a></p>
+            <p>¿Ya tienes cuenta? <a href="login.php">Inicia sesión</a></p>
+                <div class="action-buttons">
+                    <p><button class="inicio" onclick="window.location.href='index.html'">← Volver al inicio</button></p>
+                </div>
         </div>
+        <div class="decoracion"></div>
+    </div>
+</body>
+</html>
