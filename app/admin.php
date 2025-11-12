@@ -158,7 +158,13 @@ $usuarios = $pdo->query("
 ")->fetchAll();
 
 $pendientesComprobantes = $pdo
-    ->query("SELECT PagoID FROM PagoCuota WHERE AprobadoP IS NULL ORDER BY PagoID ASC")
+    ->query("
+        SELECT pc.PagoID, ep.HabID
+        FROM PagoCuota pc
+        JOIN efectua_pago ep ON ep.PagoID = pc.PagoID
+        WHERE pc.AprobadoP IS NULL
+        ORDER BY pc.PagoID ASC
+    ")
     ->fetchAll();
 
 ?>
