@@ -51,11 +51,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $_SESSION['Usuario'] = $usuario;
     $_SESSION['admin'] = $esAdmin;
 
-    set_flash("Completa la postulación y espera a ser aprobado", "success");
-
     if ($esAdmin) {
+        set_flash("Eres el primer usuario y administrador del sistema.", "success");
         header("Location: guardar_datos.php");
     } else {
+        set_flash("Completa la postulación y espera a ser aprobado.", "success");
         header("Location: postulacion.php");
     }
     exit;
@@ -77,8 +77,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <?= get_flash() ?>
 
             <form action="registrar.php" method="POST">
-                <input type="text" name="usuario" placeholder="Usuario" required>
-                <input type="password" name="password" placeholder="Contraseña" required>
+                <input type="text" name="Usuario" placeholder="Usuario" required>
+                <input type="password" name="Contraseña" placeholder="Contraseña" required>
                 <button type="submit">Registrarse</button>
             </form>
             <p>¿Ya tienes cuenta? <a href="login.php">Inicia sesión</a></p>

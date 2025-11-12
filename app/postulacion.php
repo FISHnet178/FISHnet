@@ -1,27 +1,8 @@
 <?php
 require 'config.php';
-session_start();
-
-function set_flash($msg, $type = 'info') {
-    $_SESSION['flash'] = ['msg' => $msg, 'type' => $type];
-}
-function get_flash() {
-    if (!empty($_SESSION['flash'])) {
-        $f = $_SESSION['flash'];
-        unset($_SESSION['flash']);
-        return "<div class='flash {$f['type']}'>{$f['msg']}</div>";
-    }
-    return '';
-}
-function js_alert_and_redirect(string $message, string $location) {
-    $msg = json_encode($message, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
-    $loc = json_encode($location, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
-    echo "<script>alert($msg); window.location.href = $loc;</script>";
-    exit;
-}
+require 'flash_set.php';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-
     $habID = $_SESSION['HABID'] ?? null;
 
     if (!$habID) {
@@ -30,12 +11,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 
-    $nombre = $_POST["nombre"] ?? '';
-    $telefono = $_POST["telefono"] ?? '';
+    $nombre = trim($_POST["nombre"] ?? '');
+    $telefono = trim($_POST["telefono"] ?? '');
     $fecha_nacimiento = $_POST["fecha_nacimiento"] ?? '';
     $habitante_uruguay = $_POST["habitante_uruguay"] ?? '';
-    $motivo = $_POST["motivo"] ?? '';
-    $cantidad = intval($_POST["cantidad_ingresan"] ?? 1);
+    $motivo = trim($_POST["motivo"] ?? '');
+    $cantidad = max(1, intval($_POST["cantidad_ingresan"] ?? 1));
 
     if ($habitante_uruguay !== "si") {
         set_flash("Solo pueden postularse habitantes permanentes de Uruguay.", "error");
@@ -43,41 +24,50 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 
-    $comprobante = null;
-    if (isset($_FILES["comprobante_ingreso"]) && $_FILES["comprobante_ingreso"]["error"] === UPLOAD_ERR_OK) {
-        $comprobante = file_get_contents($_FILES["comprobante_ingreso"]["tmp_name"]);
-    } else {
+    // Validación de archivo
+    if (!isset($_FILES["comprobante_ingreso"]) || $_FILES["comprobante_ingreso"]["error"] !== UPLOAD_ERR_OK) {
         set_flash("Error al subir el comprobante de ingreso.", "error");
         header("Location: postulacion.php");
         exit;
     }
 
-    $fecha_nacimiento_dt = new DateTime($fecha_nacimiento);
-    $hoy = new DateTime();
-    $edad = $fecha_nacimiento_dt->diff($hoy)->y;
-
-    if ($edad < 18) {
-      set_flash("Debes ser mayor de 18 años para postularte.", "error");
-      header("Location: postulacion.php");
-      exit;
-    }
     if ($_FILES["comprobante_ingreso"]["size"] > 10 * 1024 * 1024) {
-      set_flash("El comprobante de ingreso no puede superar los 10 MB.", "error");
-      header("Location: postulacion.php");
-      exit;
+        set_flash("El comprobante de ingreso no puede superar los 10 MB.", "error");
+        header("Location: postulacion.php");
+        exit;
     }
 
     $allowed_types = ['application/pdf', 'image/jpeg', 'image/png'];
-    if (!in_array($_FILES["comprobante_ingreso"]["type"], $allowed_types)) {
-      set_flash("El comprobante de ingreso debe ser un archivo PDF, JPG, JPEG o PNG.", "error");
-      header("Location: postulacion.php");
-      exit;
+    $mime = mime_content_type($_FILES["comprobante_ingreso"]["tmp_name"]);
+    if (!in_array($mime, $allowed_types)) {
+        set_flash("El comprobante de ingreso debe ser PDF, JPG o PNG.", "error");
+        header("Location: postulacion.php");
+        exit;
     }
-    
+
+    $comprobante = file_get_contents($_FILES["comprobante_ingreso"]["tmp_name"]);
+
+    // Validación de edad
+    try {
+        $fecha_nacimiento_dt = new DateTime($fecha_nacimiento);
+        $hoy = new DateTime();
+        $edad = $fecha_nacimiento_dt->diff($hoy)->y;
+    } catch (Exception $e) {
+        set_flash("Fecha de nacimiento inválida.", "error");
+        header("Location: postulacion.php");
+        exit;
+    }
+
+    if ($edad < 18) {
+        set_flash("Debes ser mayor de 18 años para postularte.", "error");
+        header("Location: postulacion.php");
+        exit;
+    }
+
     try {
         $pdo->beginTransaction();
 
-        $stmt = $pdo->prepare("INSERT INTO Postulaciones 
+        $stmt = $pdo->prepare("INSERT INTO postulaciones 
             (HabID, nombre, telefono, fecha_nacimiento, habitante_uruguay, motivo, comprobante_ingreso, cantidad_ingresan) 
             VALUES (:HabID, :nombre, :telefono, :fecha_nacimiento, :habitante_uruguay, :motivo, :comprobante, :cantidad)");
 
@@ -93,26 +83,32 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $PosID = $pdo->lastInsertId();
 
-        for ($i = 1; $i < $cantidad; $i++) {
-            $nombre_i = $_POST["nombre_integrante_$i"] ?? '';
-            $apellido_i = $_POST["apellido_integrante_$i"] ?? '';
-            $edad_i = intval($_POST["edad_integrante_$i"] ?? 0);
-            $ci_i = $_POST["ci_integrante_$i"] ?? '';
+        // Insertar integrantes adicionales
+        if ($cantidad > 1) {
+            for ($i = 1; $i < $cantidad; $i++) {
+                $nombre_i = trim($_POST["nombre_integrante_$i"] ?? '');
+                $apellido_i = trim($_POST["apellido_integrante_$i"] ?? '');
+                $edad_i = intval($_POST["edad_integrante_$i"] ?? 0);
+                $ci_i = trim($_POST["ci_integrante_$i"] ?? '');
 
-            $stmt_i = $pdo->prepare("INSERT INTO Integrantes 
-                (PosID, nombre, apellido, edad, ci) 
-                VALUES (:PosID, :nombre, :apellido, :edad, :ci)");
+                if ($nombre_i && $apellido_i && $edad_i > 0 && $ci_i) {
+                    $stmt_i = $pdo->prepare("INSERT INTO Integrantes 
+                        (PosID, nombre, apellido, edad, ci) 
+                        VALUES (:PosID, :nombre, :apellido, :edad, :ci)");
 
-            $stmt_i->bindParam(":PosID", $PosID, PDO::PARAM_INT);
-            $stmt_i->bindParam(":nombre", $nombre_i);
-            $stmt_i->bindParam(":apellido", $apellido_i);
-            $stmt_i->bindParam(":edad", $edad_i, PDO::PARAM_INT);
-            $stmt_i->bindParam(":ci", $ci_i);
-            $stmt_i->execute();
+                    $stmt_i->bindParam(":PosID", $PosID, PDO::PARAM_INT);
+                    $stmt_i->bindParam(":nombre", $nombre_i);
+                    $stmt_i->bindParam(":apellido", $apellido_i);
+                    $stmt_i->bindParam(":edad", $edad_i, PDO::PARAM_INT);
+                    $stmt_i->bindParam(":ci", $ci_i);
+                    $stmt_i->execute();
+                }
+            }
         }
 
         $pdo->commit();
 
+        set_flash("Postulación enviada correctamente.", "success");
         header("Location: index.html");
         exit;
 
@@ -124,6 +120,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -142,22 +139,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       const contenedor = document.getElementById("integrantes_extra");
       contenedor.innerHTML = "";
 
-      if (cantidad > 1 && cantidad <= 4) {
+      if (cantidad > 1) {
         for (let i = 1; i < cantidad; i++) {
           contenedor.innerHTML += `
-        <fieldset>
-          <legend>Integrante ${i}</legend>
-          <label>Nombre:</label><input type="text" name="nombre_integrante_${i}" required><br>
-          <label>Apellido:</label><input type="text" name="apellido_integrante_${i}" required><br>
-          <label>Edad:</label><input type="number" name="edad_integrante_${i}" required><br>
-          <label>Cédula:</label><input type="text" name="ci_integrante_${i}" required><br>
-        </fieldset><br>
+            <fieldset>
+              <legend>Integrante ${i}</legend>
+              <label>Nombre:</label><input type="text" name="nombre_integrante_${i}" required><br>
+              <label>Apellido:</label><input type="text" name="apellido_integrante_${i}" required><br>
+              <label>Edad:</label><input type="number" name="edad_integrante_${i}" required><br>
+              <label>Cédula:</label><input type="text" name="ci_integrante_${i}" required><br>
+            </fieldset><br>
           `;
         }
-      } else if (cantidad > 4) {
-        alert("No pueden ingresar más de 4 personas por postulación.");
-        document.getElementById("cantidad_ingresan").value = 1;
-        return;
       }
     }
   </script>

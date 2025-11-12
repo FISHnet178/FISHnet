@@ -93,33 +93,46 @@ $salones = $pdo->query("
 </head>
 <body>
 <div class="contenedor">
-  <div class="dashboard-content">
-    <div class="center-block">
+
+  <div class="datos-form">
       <h2>Reservar Salón</h2>
       <?= get_flash() ?>
-      <?php if($errors): ?><div class="errors"><ul><?php foreach($errors as $e) echo "<li>".htmlspecialchars($e)."</li>"; ?></ul></div><?php endif; ?>
-      <?php if($success): ?><div class="success">Reserva creada correctamente.</div><?php endif; ?>
+      
+      <?php if($errors): ?>
+        <div class="errors">
+          <ul><?php foreach($errors as $e) echo "<li>".htmlspecialchars($e)."</li>"; ?></ul>
+        </div>
+      <?php endif; ?>
+      
+      <?php if($success): ?>
+        <div class="success">Reserva creada correctamente.</div>
+      <?php endif; ?>
+      
       <form id="datos-form" method="post">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
-        <label>Salón
+        
+        <label>
           <select id="salonid" name="salonid" required>
-            <option value="">-- Seleccionar --</option>
+            <option value="">-- Seleccionar salón --</option>
             <?php foreach($salones as $s): ?>
               <option value="<?= $s['SalonID'] ?>"
                       data-estado="<?= htmlspecialchars($s['Estado']) ?>"
                       data-horinicio="<?= (int)$s['HorInicio'] ?>"
                       data-horfin="<?= (int)$s['HorFin'] ?>">
-                  Sala #<?= $s['SalonID'] ?> — <?= htmlspecialchars($s['TerrenoNombre'] ?? 'Terreno') ?>
-                  <?php if(strtolower($s['Estado'])!=='disponible'){ echo " — ".htmlspecialchars($s['Estado']); } ?>
+                Salón #<?= $s['SalonID'] ?> — <?= htmlspecialchars($s['TerrenoNombre'] ?? 'Terreno') ?>
+                <?php if(strtolower($s['Estado'])!=='disponible'){ echo " — ".htmlspecialchars($s['Estado']); } ?>
               </option>
             <?php endforeach; ?>
           </select>
         </label>
-        <label>Fecha
-          <input type="date" id="fecha" name="fecha" required value="<?=htmlspecialchars($_POST['fecha']??'')?>">
+
+        <label>Fecha:
+          <input type="date" id="fecha" name="fecha" required 
+                 value="<?= htmlspecialchars($_POST['fecha'] ?? '') ?>">
         </label>
-        <label>Comentario (opcional)
-          <textarea name="comentario" rows="3"><?=htmlspecialchars($_POST['comentario']??'')?></textarea>
+
+        <label>
+          <textarea name="comentario" rows="3" placeholder="Comentario / razón (opcional):"><?= htmlspecialchars($_POST['comentario'] ?? '') ?></textarea>
         </label>
         <input type="hidden" id="hora_inicio" name="hora_inicio">
         <input type="hidden" id="hora_fin" name="hora_fin">
@@ -128,7 +141,6 @@ $salones = $pdo->query("
       <div class="action-buttons" style="margin-top:12px;">
         <button onclick="window.location.href='Inicio.php'">← Volver al inicio</button>
       </div>
-    </div>
   </div>
 
   <div class="decoracion">
@@ -146,7 +158,6 @@ $salones = $pdo->query("
 <div id="reserva-tooltip" aria-hidden="true"></div>
 
 <script>
-/* Variables DOM */
 const salonSelect = document.getElementById('salonid');
 const fechaInput = document.getElementById('fecha');
 const filaHorario = document.getElementById('filaHorario');
@@ -157,7 +168,6 @@ let reservas = [];
 let seleccionando = false;
 let inicioSeleccion = '';
 
-/* utilidades tiempo */
 function hhmmToParts(v){
     if (v === undefined || v === null) return null;
     const s = String(v).trim();
@@ -191,7 +201,6 @@ const STEP_MIN = 30;
 const MIN_DURATION = 60;
 function toMinutesStr(hhmm){ const [h,m]=hhmm.split(':').map(Number); return h*60 + m; }
 
-/* Genera la fila de celdas entre startParts y endParts */
 function generarFilaDynamicExact(startParts, endParts){
     filaHorario.innerHTML = '';
     if (!isBefore(startParts, endParts)) return;
@@ -259,7 +268,6 @@ function generarFilaDynamicExact(startParts, endParts){
     }
 }
 
-/* dibuja calendario según salón seleccionado */
 function generarCalendarioConSalon(salonOption){
     const rawHi = salonOption?.dataset?.horinicio ?? null;
     const rawHf = salonOption?.dataset?.horfin ?? null;
@@ -275,7 +283,6 @@ function generarCalendarioConSalon(salonOption){
     generarFilaDynamicExact(startParts, endParts);
 }
 
-/* carga reservas desde endpoint y dibuja */
 function cargarReservas(){
     reservas = [];
     horaInicioInput.value = '';
@@ -318,7 +325,6 @@ function cargarReservas(){
         });
 }
 
-/* selección con ratón */
 document.addEventListener('mouseup', ()=> {
     if (!seleccionando) return;
     seleccionando = false;
@@ -348,12 +354,10 @@ document.addEventListener('mouseup', ()=> {
     }
 });
 
-/* evento UI */
 salonSelect.addEventListener('change', cargarReservas);
 fechaInput.addEventListener('change', cargarReservas);
 if (salonSelect.value && fechaInput.value) cargarReservas();
 
-/* TOOLTIP */
 let reservaTooltip = document.getElementById('reserva-tooltip');
 
 function escapeHtml(s){

@@ -92,41 +92,50 @@ if (!$datos) {
 </head>
 <body>
   <div class="contenedor">
-    <div class="dashboard-content">
-      <div class="center-block">
-        <h2>Datos Personales</h2>
-        <form id="datos-form" action="" method="POST" enctype="multipart/form-data">
-          <label>
-            Primer nombre:
-            <input type="text" name="NombreH" value="<?php echo htmlspecialchars($datos['NombreH'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-          </label>
-          <label>
-            Primer apellido:
-            <input type="text" name="ApellidoH" value="<?php echo htmlspecialchars($datos['ApellidoH'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-          </label>
-          <label>
-            Cédula de identidad:
-            <input type="number" name="CI" id="cedula" value="<?php echo htmlspecialchars($datos['CI'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-          </label>
-          <label>
-            Foto de perfil:
-            <input type="file" name="foto" accept="image/*">
-          </label>
+    <div class="datos-form">
+      <h2>Datos Personales</h2>
 
-          <?php if (!empty($datos['foto_perfil'] ?? null)): ?>
-            <p>Foto actual:</p>
-            <img src="mostrar_foto.php?id=<?php echo $HabID; ?>" alt="Foto de perfil" style="max-width:150px;">
-          <?php endif; ?>
+      <form id="datos-form" action="" method="POST" enctype="multipart/form-data">
+        <label>
+          <input type="text" name="NombreH" placeholder="Nombre"
+                 value="<?php echo htmlspecialchars($datos['NombreH'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" 
+                 required>
+        </label>
 
-          <button type="submit">Guardar Datos</button>
-        </form>
-        <?php if (!empty($datos['NombreH'])): ?>
-          <p><a href='inicio.php'>← Volver al inicio</a></p>
+        <label>
+          <input type="text" name="ApellidoH" placeholder="Apellido"
+                 value="<?php echo htmlspecialchars($datos['ApellidoH'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" 
+                 required>
+        </label>
+
+        <label>
+          <input type="number" name="CI" id="cedula" placeholder="Cédula de Identidad"
+                 value="<?php echo htmlspecialchars($datos['CI'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" 
+                 required>
+        </label>
+
+        <label>
+          Foto de perfil:
+          <input type="file" name="foto" accept="image/*">
+        </label>
+
+        <?php if (!empty($datos['foto_perfil'] ?? null)): ?>
+          <p>Foto actual:</p>
+          <img src="mostrar_foto.php?id=<?php echo $HabID; ?>" 
+               alt="Foto de perfil" 
+               style="max-width:150px;">
         <?php endif; ?>
+
+        <button type="submit">Guardar Datos</button>
+      </form>
+
+      <?php if (!empty($datos['NombreH'])): ?>
+        <div class="action-buttons" style="margin-top:12px;">
+        <button onclick="window.location.href='Inicio.php'">← Volver al inicio</button>
       </div>
+      <?php endif; ?>
     </div>
     <div class="decoracion"></div>
   </div>
-
 </body>
 </html>

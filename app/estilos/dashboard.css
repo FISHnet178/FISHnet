@@ -33,7 +33,17 @@ body, html {
   max-width: 300px;
 }
 
-.datos-form input {
+.datos-form input,
+.datos-form select,
+.datos-form textarea,
+.datos-form button {
+  width: 100%;
+  box-sizing: border-box; /* Para incluir padding dentro del ancho */
+}
+
+.datos-form input,
+.datos-form select,
+.datos-form textarea {
   padding: 10px;
   border: 1px solid #ccc;
   font-size: 1em;
