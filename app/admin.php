@@ -21,7 +21,6 @@ if (empty($_SESSION['csrf_token'])) {
 }
 $csrf = $_SESSION['csrf_token'];
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $postedToken = $_POST['csrf_token'] ?? '';
     if (!hash_equals($csrf, $postedToken)) {
@@ -111,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($current === false) {
                 set_flash('Usuario no encontrado.', 'error');
             } else {
-                $newStatus = $current ? 0 : 1; 
+                $newStatus = $current ? 0 : 1;
 
                 $isSelf = isset($_SESSION['HABID']) && ((int)$_SESSION['HABID'] === $habId);
                 if ($isSelf && $newStatus === 0) {
@@ -158,7 +157,19 @@ $usuarios = $pdo->query("
 ")->fetchAll();
 
 $pendientesComprobantes = $pdo
-    ->query("SELECT PagoID FROM PagoCuota WHERE AprobadoP IS NULL ORDER BY PagoID ASC")
+    ->query("
+        SELECT 
+            pc.PagoID, 
+            ep.HabID,
+            h.Usuario,
+            h.NombreH,
+            h.ApellidoH
+        FROM PagoCuota pc
+        JOIN Efectua_pago ep ON ep.PagoID = pc.PagoID
+        JOIN Habitante h ON h.HabID = ep.HabID
+        WHERE pc.AprobadoP IS NULL
+        ORDER BY pc.PagoID ASC
+    ")
     ->fetchAll();
 
 ?>
@@ -283,6 +294,8 @@ $pendientesComprobantes = $pdo
                 <?php endif; ?>
             </div>
 
+            <!-- ====== COMPROBANTES ====== -->
+
             <div class="panel-column" aria-label="Comprobantes pendientes">
                 <h2>Comprobantes Pendientes de Aprobación</h2>
 
@@ -295,11 +308,19 @@ $pendientesComprobantes = $pdo
                                 <div style="display:flex;justify-content:space-between;align-items:center;">
                                     <div>
                                         <strong>Comprobante ID <?php echo (int)$c['PagoID']; ?></strong>
-                                        <div class="small">Usuario ID <?php echo (int)($c['HabID'] ?? 0); ?></div>
+                                        <div class="small">
+                                            Usuario ID <?php echo (int)$c['HabID']; ?> —
+                                            <?php echo htmlspecialchars($c['Usuario']); ?>
+                                            <?php if (!empty($c['NombreH']) || !empty($c['ApellidoH'])): ?>
+                                                (<?php echo htmlspecialchars(trim($c['NombreH'].' '.$c['ApellidoH'])); ?>)
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
 
-                                    <div class="action-buttons" style="justify-content:flex-end;">
-                                        <a href="ver_comprobante.php?id=<?php echo (int)$c['PagoID']; ?>" target="_blank"><button type="button">Ver</button></a>
+                                    <div class="action-buttons" style="justify-content:flex-end; gap:8px;">
+                                        <a href="ver_comprobante.php?id=<?php echo (int)$c['PagoID']; ?>" target="_blank">
+                                            <button type="button">Ver</button>
+                                        </a>
 
                                         <form method="post">
                                             <input type="hidden" name="csrf_token" value="<?php echo $csrf; ?>">
@@ -355,7 +376,7 @@ $pendientesComprobantes = $pdo
         });
     });
 })();
-
 </script>
+
 </body>
 </html>

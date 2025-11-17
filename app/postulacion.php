@@ -24,7 +24,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 
-    // Validación de archivo
     if (!isset($_FILES["comprobante_ingreso"]) || $_FILES["comprobante_ingreso"]["error"] !== UPLOAD_ERR_OK) {
         set_flash("Error al subir el comprobante de ingreso.", "error");
         header("Location: postulacion.php");
@@ -47,7 +46,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $comprobante = file_get_contents($_FILES["comprobante_ingreso"]["tmp_name"]);
 
-    // Validación de edad
     try {
         $fecha_nacimiento_dt = new DateTime($fecha_nacimiento);
         $hoy = new DateTime();
@@ -82,8 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->execute();
 
         $PosID = $pdo->lastInsertId();
-
-        // Insertar integrantes adicionales
+        
         if ($cantidad > 1) {
             for ($i = 1; $i < $cantidad; $i++) {
                 $nombre_i = trim($_POST["nombre_integrante_$i"] ?? '');

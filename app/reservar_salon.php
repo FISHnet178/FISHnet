@@ -25,9 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($salonid <= 0) $errors[] = 'Selecciona un salón.';
     if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) $errors[] = 'Fecha inválida.';
-    if (!preg_match('/^\d{2}:\d{2}$/', $hora_inicio)) $errors[] = 'Hora inicio inválida.';
-    if (!preg_match('/^\d{2}:\d{2}$/', $hora_fin)) $errors[] = 'Hora fin inválida.';
-    if ($hora_inicio >= $hora_fin) $errors[] = 'Hora inicio debe ser anterior a hora fin.';
+    if (!preg_match('/^\d{2}:\d{2}$/', $hora_inicio)) $errors[] = 'Debes seleccionar un horario.';
 
     if (empty($errors)) {
         function minutosDesde($hhmm){
@@ -98,16 +96,6 @@ $salones = $pdo->query("
       <h2>Reservar Salón</h2>
       <?= get_flash() ?>
       
-      <?php if($errors): ?>
-        <div class="errors">
-          <ul><?php foreach($errors as $e) echo "<li>".htmlspecialchars($e)."</li>"; ?></ul>
-        </div>
-      <?php endif; ?>
-      
-      <?php if($success): ?>
-        <div class="success">Reserva creada correctamente.</div>
-      <?php endif; ?>
-      
       <form id="datos-form" method="post">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
         
@@ -163,7 +151,8 @@ const fechaInput = document.getElementById('fecha');
 const filaHorario = document.getElementById('filaHorario');
 const horaInicioInput = document.getElementById('hora_inicio');
 const horaFinInput = document.getElementById('hora_fin');
-
+const form = document.getElementById('datos-form');
+ 
 let reservas = [];
 let seleccionando = false;
 let inicioSeleccion = '';
