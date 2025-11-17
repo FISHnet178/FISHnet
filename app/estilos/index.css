@@ -4,6 +4,7 @@ html, body {
   height: 100%;
   width: 100%;
   font-family: Arial, sans-serif;
+  font-size: 1vw; /* base proporcional al ancho */
 }
 
 body {
@@ -21,25 +22,25 @@ header {
   background-size: cover;
   background-position: center;
   color: white;
-  padding: 10px 20px;
+  padding: 1vh 2vw;
 }
 
 .info {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1vw;
 }
 
 .logo {
-  width: 60px;
-  height: 60px;
+  width: 4vw;
+  height: 4vw;
   border-radius: 50%;
   overflow: hidden;
   display: flex;
 }
 
 .nombre {
-  font-size: 1.5em;
+  font-size: 1.5vw;
   font-weight: bold;
 }
 
@@ -48,55 +49,55 @@ header {
   background: rgba(0, 64, 128, 0.85);
   border: none;
   color: #fff;
-  font-size: 1.5em;
+  font-size: 1.5vw;
   cursor: pointer;
   border-radius: 50%;
-  height: 60px;
-  width: 60px;
+  height: 4vw;
+  width: 4vw;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 8px rgba(0,64,128,0.10);
+  box-shadow: 0 0.2vw 0.8vw rgba(0,64,128,0.10);
 }
 
 .menu-btn:hover, .menu-btn:focus {
   background: #0056b3;
-  box-shadow: 0 4px 16px rgba(0,64,128,0.15);
+  box-shadow: 0 0.4vw 1.6vw rgba(0,64,128,0.15);
   outline: none;
 }
 
 /* ===== MENU ===== */
 .menu {
   position: absolute;
-  top: 80px;
-  right: 20px;
+  top: 8vh;
+  right: 2vw;
   background: linear-gradient(135deg, #f8fbff 80%, #e6f0fa 100%);
-  border: 1px solid #b3c6e0;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 64, 128, 0.10);
+  border: 0.1vw solid #b3c6e0;
+  border-radius: 1.2vw;
+  box-shadow: 0 0.8vw 2.4vw rgba(0, 64, 128, 0.10);
   display: none;
   flex-direction: column;
-  min-width: 200px;
+  min-width: 20vw;
   z-index: 100;
   overflow: hidden;
   animation: menuFadeIn 0.25s ease;
 }
 
 @keyframes menuFadeIn {
-  from { opacity: 0; transform: translateY(-10px);}
+  from { opacity: 0; transform: translateY(-1vh);}
   to { opacity: 1; transform: translateY(0);}
 }
 
 .menu a {
-  padding: 14px 20px;
+  padding: 1vh 2vw;
   text-decoration: none;
   color: #004080;
   font-weight: 600;
-  font-size: 1.05em;
+  font-size: 1.05vw;
   transition: background 0.2s, color 0.2s;
-  border-bottom: 1px solid #e6f0fa;
-  margin: 4px 0; 
+  border-bottom: 0.1vw solid #e6f0fa;
+  margin: 0.4vh 0; 
   display: block;
 }
 
@@ -117,48 +118,48 @@ main {
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  gap: 20px;
-  padding: 20px;
+  gap: 2vw;
+  padding: 2vw;
   box-sizing: border-box;
 }
 
 /* ===== RECUADRO1 ===== */
 .recuadro1 {
   flex: 1 1 40%;
-  min-width: 300px;
+  min-width: 15vw;
   max-width: 45%;
-  height: 60%;
-  border: 2px dashed #004080;
+  height: 60vh;
+  border: 0.2vw dashed #004080;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #f9f9f9;
   box-sizing: border-box;
-  padding: 16px;
+  padding: 1.6vw;
 }
 
 .recuadro1 img {
   max-width: 100%;
   max-height: 100%;
-  object-fit: contain; /* se adapta sin deformarse */
-  border-radius: 8px;
+  object-fit: contain;
+  border-radius: 0.8vw;
 }
 
 /* ===== RECUADRO2 (centrado) ===== */
 .recuadro2 {
   flex: 1 1 50%;
-  min-width: 300px;
+  min-width: 15vw;
   max-width: 45%;
-  height: 60%;
-  border: 2px dashed #004080;
+  height: 60vh;
+  border: 0.2vw dashed #004080;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* centra verticalmente */
-  align-items: center;     /* centra horizontalmente */
-  text-align: center;      /* centra el texto */
-  font-size: 16px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 1vw;
   background-color: #f9f9f9;
-  padding: 16px;
+  padding: 1.6vw;
   box-sizing: border-box;
 }
 
@@ -166,9 +167,29 @@ main {
 .recuadro2 h2,
 .recuadro2 h3,
 .recuadro2 p {
-  margin: 10px 0;
+  margin: 1vh 0;
   line-height: 1.5;
   width: 100%;
+}
+
+/* ===== LISTAS INTERNAS (proporcionales) ===== */
+.recuadro2 ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.recuadro2 li {
+  background-color: #f9f9f9;
+  margin-bottom: 0.5vh;
+  padding: 0.8vh 1vw;
+  border-radius: 0.6vw;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5vh;
+  min-height: 5vh;
 }
 
 /* ===== FOOTER ===== */
@@ -177,82 +198,9 @@ footer {
   background-color: #004080;
   color: white;
   text-align: center;
-  padding: 10px;
+  padding: 1vh 0;
 }
 
 footer a {
   color : #84a3f7;
-}
-
-/* ====== RESPONSIVE ====== */
-
-/* Pantallas medianas */
-@media (max-width: 900px) {
-  .logo {
-    width: 50px;
-    height: 50px;
-  }
-
-  .nombre {
-    font-size: 1.2em;
-  }
-
-  .menu-btn {
-    height: 50px;
-    width: 50px;
-    font-size: 1.2em;
-  }
-
-  main {
-    flex-direction: column;
-  }
-
-  .recuadro1, .recuadro2 {
-    max-width: 90%;
-    height: auto;
-  }
-}
-
-/* Pantallas pequeñas (celulares) */
-@media (max-width: 600px) {
-  header {
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 10px;
-  }
-
-  .info {
-    gap: 0.5rem;
-  }
-
-  .logo {
-    width: 40px;
-    height: 40px;
-  }
-
-  .nombre {
-    font-size: 1em;
-  }
-
-  .menu-btn {
-    height: 45px;
-    width: 45px;
-    font-size: 1.1em;
-  }
-
-  .menu {
-    top: 65px;
-    right: 10px;
-  }
-
-  main {
-    flex-direction: column;
-    padding: 10px;
-  }
-
-  .recuadro1, .recuadro2 {
-    width: 100%;
-    max-width: 100%;
-    height: auto;
-  }
 }
