@@ -1,6 +1,6 @@
 <?php
-$host	  = '192.168.5.50';
-$dbname	  = 'FISHnet';
+$host	  = 'db';
+$dbname	  = 'cooperativa';
 $user     = 'nahuel.resala';
 $password = '56843589$';
 $dsn      = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
