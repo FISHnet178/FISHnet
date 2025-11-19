@@ -109,7 +109,7 @@ endif;
             </form>
             <p>¿Ya tienes cuenta? <a href="login.php">Inicia sesión</a></p>
                 <div class="action-buttons">
-                    <p><button class="inicio" onclick="window.location.href='index.html'">← Volver al inicio</button></p>
+                    <p><button class="inicio" onclick="window.location.href='index.php'">← Volver al inicio</button></p>
                 </div>
         </div>
         <div class="decoracion"></div>

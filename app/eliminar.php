@@ -7,11 +7,11 @@ if ($usuario) {
     if (file_exists($archivo)) {
         unlink($archivo);
         session_destroy();
-        echo "Usuario eliminado correctamente. <a href='index.html'>Volver al inicio</a>";
+        echo "Usuario eliminado correctamente. <a href='index.php'>Volver al inicio</a>";
     } else {
         echo "No se encontró el archivo del usuario.";
     }
 } else {
-    echo "No has iniciado sesión. <a href='index.html'>Iniciar sesión</a>";
+    echo "No has iniciado sesión. <a href='index.php'>Iniciar sesión</a>";
 }
 ?>

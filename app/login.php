@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <p>¿No tienes cuenta? <a href="registrar.php">Regístrate</a></p>
 
             <div class="action-buttons">
-                <p><button class="inicio" onclick="window.location.href='index.html'">← Volver al inicio</button></p>
+                <p><button class="inicio" onclick="window.location.href='index.php'">← Volver al inicio</button></p>
             </div>
 
             <?php

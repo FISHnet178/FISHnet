@@ -7,7 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if (!$habID) {
         set_flash("Debes estar registrado para postularte.", "error");
-        header("Location: index.html");
+        header("Location: index.php");
         exit;
     }
 
@@ -106,7 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $pdo->commit();
 
         set_flash("Postulación enviada correctamente.", "success");
-        header("Location: index.html");
+        header("Location: index.php");
         exit;
 
     } catch (Exception $e) {
