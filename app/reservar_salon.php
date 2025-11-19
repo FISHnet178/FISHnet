@@ -94,7 +94,45 @@ $salones = $pdo->query("
 
   <div class="datos-form">
       <h2>Reservar Salón</h2>
-      <?= get_flash() ?>
+      <?php
+$flash = get_flash();
+
+if ($flash):
+    $colors = [
+        'success' => '#4CAF50',
+        'error'   => '#f44336',
+        'info'    => '#2196F3',
+        'warning' => '#ff9800',
+    ];
+
+    $color = $colors[$flash['type']] ?? '#2196F3';
+    $msg   = htmlspecialchars($flash['msg']);
+
+    echo '<div class="flash-message" style="
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background:' . $color . ';
+        color:#fff;
+        padding:12px 20px;
+        border-radius:6px;
+        box-shadow:0 3px 8px rgba(0,0,0,0.2);
+        font-size:15px;
+        z-index:9999;
+        animation: fadeInOut 4s ease forwards;
+    ">' . $msg . '</div>
+
+    <style>
+    @keyframes fadeInOut {
+        0% { opacity: 0; transform: translateY(-10px) translateX(-50%); }
+        10% { opacity: 1; transform: translateY(0) translateX(-50%); }
+        80% { opacity: 1; }
+        100% { opacity: 0; transform: translateY(-10px) translateX(-50%); }
+    }
+    </style>';
+endif;
+?>
       
       <form id="datos-form" method="post">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
@@ -127,7 +165,7 @@ $salones = $pdo->query("
         <button type="submit">Reservar</button>
       </form>
       <div class="action-buttons" style="margin-top:12px;">
-        <button onclick="window.location.href='Inicio.php'">← Volver al inicio</button>
+        <button onclick="window.location.href='inicio.php'">← Volver al inicio</button>
       </div>
   </div>
 

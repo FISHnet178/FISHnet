@@ -72,14 +72,22 @@ $resultPagos = $stmtPagos->fetchAll(PDO::FETCH_ASSOC);
                             No disponible
                         <?php endif; ?>
                         <strong>Aprobado:</strong> <?= $row['AprobadoP'] ? 'Sí' : 'No' ?>
-                        <strong>Fecha Aprobación:</strong> <?= htmlspecialchars($row['fecha_aprobacionP']) ?>
+                        <strong>Fecha Aprobación:</strong> 
+                            <?php
+                                if ((int)$row['AprobadoP'] === 1) {
+                                    echo htmlspecialchars($row['fecha_aprobacionP']);
+                                } else {
+                                    echo "No";
+                                }
+                            ?>
+
                     </li>
                     <?php endforeach; ?>
                 </ul>
             </div>
         </div>
         <div class="action-buttons">
-            <p><button class="inicio" onclick="window.location.href='Inicio.php'">← Volver al inicio</button></p>
+            <p><button class="inicio" onclick="window.location.href='inicio.php'">← Volver al inicio</button></p>
         </div>
     </div>
     <div class="decoracion"></div>

@@ -1,8 +1,6 @@
 <?php
-session_start();
-
-require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/flash_set.php';
+require 'config.php';
+require 'flash_set.php';
 
 $currentHabId = $_SESSION['HABID'] ?? 0;
 $stmt = $pdo->prepare("SELECT admin FROM Habitante WHERE HABID = ?");

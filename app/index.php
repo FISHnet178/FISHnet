@@ -1,3 +1,7 @@
+<?php
+require 'flash_set';
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,6 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
+  <?= get_flash() ?>
   <header>
     <div class="info">
       <div class="logo"><img src="estilos/Logo.png"></div>
@@ -31,7 +36,7 @@
   </main>
 
   <footer>
-    <p>Contáctanos: ElRincóndelMundo@contacto.com | +598-xxx-xxxx | ¿Quieres saber que hacemos con tu información? <a href="info.html">click aquí</a></p>
+    <p>Contáctanos: ElRincóndelMundo@contacto.com | +598-xxx-xxxx | ¿Quieres saber que hacemos con tu información? <a href="info.php">click aquí</a></p>
   </footer>
 
   <script>

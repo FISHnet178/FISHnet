@@ -51,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $hoy = new DateTime();
         $edad = $fecha_nacimiento_dt->diff($hoy)->y;
     } catch (Exception $e) {
-        set_flash("Fecha de nacimiento inválida.", "error");
+        set_flash("Fecha de nacimiento inválida. Error: " . $e->getMessage(), "error"); // Muestra el error directamente
         header("Location: postulacion.php");
         exit;
     }
@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     try {
         $pdo->beginTransaction();
 
-        $stmt = $pdo->prepare("INSERT INTO postulaciones 
+        $stmt = $pdo->prepare("INSERT INTO Postulaciones 
             (HabID, nombre, telefono, fecha_nacimiento, habitante_uruguay, motivo, comprobante_ingreso, cantidad_ingresan) 
             VALUES (:HabID, :nombre, :telefono, :fecha_nacimiento, :habitante_uruguay, :motivo, :comprobante, :cantidad)");
 
@@ -110,15 +110,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
 
     } catch (Exception $e) {
-        if ($pdo->inTransaction()) $pdo->rollBack();
-        error_log("Error en postulacion.php: " . $e->getMessage());
-        set_flash("Error en la postulación. Intenta de nuevo.", "error");
+        set_flash("Error en la postulación: " . $e->getMessage(), "error");
         header("Location: postulacion.php");
         exit;
     }
 }
-
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -157,7 +155,45 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <div class="form">
       <h2>Formulario de Postulación</h2>
 
-      <?= get_flash() ?>
+      <?php
+$flash = get_flash();
+
+if ($flash):
+    $colors = [
+        'success' => '#4CAF50',
+        'error'   => '#f44336',
+        'info'    => '#2196F3',
+        'warning' => '#ff9800',
+    ];
+
+    $color = $colors[$flash['type']] ?? '#2196F3';
+    $msg   = htmlspecialchars($flash['msg']);
+
+    echo '<div class="flash-message" style="
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background:' . $color . ';
+        color:#fff;
+        padding:12px 20px;
+        border-radius:6px;
+        box-shadow:0 3px 8px rgba(0,0,0,0.2);
+        font-size:15px;
+        z-index:9999;
+        animation: fadeInOut 4s ease forwards;
+    ">' . $msg . '</div>
+
+    <style>
+    @keyframes fadeInOut {
+        0% { opacity: 0; transform: translateY(-10px) translateX(-50%); }
+        10% { opacity: 1; transform: translateY(0) translateX(-50%); }
+        80% { opacity: 1; }
+        100% { opacity: 0; transform: translateY(-10px) translateX(-50%); }
+    }
+    </style>';
+endif;
+?>
 
       <form action="postulacion.php" method="POST" enctype="multipart/form-data">
         <label>Nombre completo:</label><br>

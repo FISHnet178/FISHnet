@@ -1,3 +1,7 @@
+<?php
+session_start();
+require 'config.php';
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -16,7 +20,8 @@
             <p>En FISHnet, nos tomamos muy en serio la privacidad y seguridad de tus datos personales. Queremos asegurarte que cualquier información que compartas con nosotros será manejada con el máximo cuidado y conforme a la ley N° 18.331</p>
             <p>No compartimos tu información con terceros sin tu consentimiento explícito. Utilizamos tus datos únicamente para mejorar tu experiencia con nuestros servicios y para mantenerte informado sobre novedades y ofertas relevantes.</p>
             <p>Si tienes alguna pregunta o inquietud sobre cómo manejamos tu información, no dudes en contactarnos. Estamos aquí para ayudarte y garantizar que tu experiencia con FISHnet sea segura y confiable.</p>
-            <p><a href="index.html">Volver al inicio</a></p>
+            <p><button onclick="window.location.href = document.referrer">← Volver al inicio</button></p>
+
         </div>
         <div class="decoracion"></div>
     </div>

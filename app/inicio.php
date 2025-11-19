@@ -1,6 +1,6 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) session_start();
-
+require 'config.php';
+require 'flash_set.php';
 if (!isset($_SESSION['HABID'])) {
     header('Location: login.php');
     exit;
@@ -8,9 +8,6 @@ if (!isset($_SESSION['HABID'])) {
 
 $nombreH = $_SESSION['nombreH'];
 $currentHabId = $_SESSION['HABID'];
-
-require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/flash_set.php';
 
 if (!isset($_SESSION['isAdmin'])) {
     $stmt = $pdo->prepare("SELECT admin FROM Habitante WHERE HabID = ?");
@@ -157,7 +154,7 @@ function renderPost($post, $respuestasByPost, $isAdmin, $level = 0) {
     </main>
 
     <footer>
-        <p>Contáctanos: ElRincóndelMundo@contacto.com | +598-xxx-xxxx | ¿Quieres saber que hacemos con tu información? <a href="info.html">click aquí</a></p>
+        <p>Contáctanos: ElRincóndelMundo@contacto.com | +598-xxx-xxxx | ¿Quieres saber que hacemos con tu información? <a href="info.php">click aquí</a></p>
     </footer>
 
     <script>

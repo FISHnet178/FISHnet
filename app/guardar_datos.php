@@ -131,7 +131,7 @@ if (!$datos) {
 
       <?php if (!empty($datos['NombreH'])): ?>
         <div class="action-buttons" style="margin-top:12px;">
-        <button onclick="window.location.href='Inicio.php'">← Volver al inicio</button>
+        <button onclick="window.location.href='inicio.php'">← Volver al inicio</button>
       </div>
       <?php endif; ?>
     </div>

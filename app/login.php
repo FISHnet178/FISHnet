@@ -1,18 +1,6 @@
 <?php
-session_start();
 require 'config.php';
-
-function js_alert(string $message) {
-    $msg = json_encode($message, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
-    echo "<script>alert($msg);</script>";
-}
-
-function js_alert_and_redirect(string $message, string $location) {
-    $msg = json_encode($message, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
-    $loc = json_encode($location, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
-    echo "<script>alert($msg); window.location.href = $loc;</script>";
-    exit;
-}
+require 'flash_set.php';
 
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -33,15 +21,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['nombreH'] = $user['NombreH'] ?? null;
 
     if (!$user) {
-        js_alert_and_redirect('Credenciales inválidas.', 'login.php');
+        set_flash('Credenciales inválidas.', 'error');
+        header('Location: login.php');
+        exit;
     }
 
     if ((int)$user['aprobado'] === 0) {
-        js_alert_and_redirect('Tu cuenta aún no ha sido aprobada. Por favor, espera la aprobación.', 'index.html');
+        set_flash('Tu cuenta aún no ha sido aprobada. Por favor, espera la aprobación.', 'warning');
+        header('Location: login.php');
+        exit;
     }
 
     if (!password_verify($password, $user['Contrasena'])) {
-        js_alert_and_redirect('Credenciales inválidas.', 'login.php');
+        set_flash('Credenciales inválidas.', 'error');
+        header('Location: login.php');
+        exit;
     }
 
     $_SESSION['perfil_actualizado'] = 
@@ -54,10 +48,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         header("Location: guardar_datos.php");
     }
-
     exit;
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -76,9 +70,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <button type="submit">Iniciar sesión</button>
             </form>
             <p>¿No tienes cuenta? <a href="registrar.php">Regístrate</a></p>
-                <div class="action-buttons">
-                    <p><button class="inicio" onclick="window.location.href='index.html'">← Volver al inicio</button></p>
-                </div>
+
+            <div class="action-buttons">
+                <p><button class="inicio" onclick="window.location.href='index.html'">← Volver al inicio</button></p>
+            </div>
+
+            <?php
+            $flash = get_flash();
+            if ($flash): ?>
+                <div class="flash-message" style="
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: <?= htmlspecialchars($flash['type'] == 'error' ? '#f44336' : ($flash['type'] == 'warning' ? '#ff9800' : '#2196F3')) ?>;
+                    color: #fff;
+                    padding: 12px 20px;
+                    border-radius: 6px;
+                    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+                    font-size: 15px;
+                    z-index: 9999;
+                    animation: fadeInOut 4s ease forwards;
+                "><?= htmlspecialchars($flash['msg']); ?></div>
+
+                <style>
+                @keyframes fadeInOut {
+                    0% { opacity: 0; transform: translateY(-10px) translateX(-50%); }
+                    10% { opacity: 1; transform: translateY(0) translateX(-50%); }
+                    80% { opacity: 1; }
+                    100% { opacity: 0; transform: translateY(-10px) translateX(-50%); }
+                }
+                </style>
+            <?php endif; ?>
+
         </div>
         <div class="decoracion"></div>
     </div>

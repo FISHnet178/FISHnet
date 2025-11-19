@@ -1,8 +1,6 @@
 <?php
-session_start();
-
-require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/flash_set.php';
+require 'config.php';
+require 'flash_set.php';
 
 $currentHabId = $_SESSION['HABID'] ?? 0;
 $stmt = $pdo->prepare("SELECT admin FROM Habitante WHERE HABID = ?");
@@ -152,7 +150,45 @@ if (isset($_GET['unidadid'])) {
 </head>
 <body>
 
-<?php get_flash(); ?>
+<?php
+$flash = get_flash();
+
+if ($flash):
+    $colors = [
+        'success' => '#4CAF50',
+        'error'   => '#f44336',
+        'info'    => '#2196F3',
+        'warning' => '#ff9800',
+    ];
+
+    $color = $colors[$flash['type']] ?? '#2196F3';
+    $msg   = htmlspecialchars($flash['msg']);
+
+    echo '<div class="flash-message" style="
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background:' . $color . ';
+        color:#fff;
+        padding:12px 20px;
+        border-radius:6px;
+        box-shadow:0 3px 8px rgba(0,0,0,0.2);
+        font-size:15px;
+        z-index:9999;
+        animation: fadeInOut 4s ease forwards;
+    ">' . $msg . '</div>
+
+    <style>
+    @keyframes fadeInOut {
+        0% { opacity: 0; transform: translateY(-10px) translateX(-50%); }
+        10% { opacity: 1; transform: translateY(0) translateX(-50%); }
+        80% { opacity: 1; }
+        100% { opacity: 0; transform: translateY(-10px) translateX(-50%); }
+    }
+    </style>';
+endif;
+?>
 
 <div class="contenedor">
   <div class="registro-form">
